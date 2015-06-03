@@ -22,7 +22,7 @@ function createUser(execlib,ParentUser){
     taskRegistry.run('findSink',{
       sinkname:sinkname,
       identity:identity,
-      propertyhash:prophash
+      propertyhash:prophash,
       onSink:this.onSinkFound.bind(this,defer,sinkname)
     });
   };

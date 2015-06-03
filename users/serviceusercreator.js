@@ -12,7 +12,7 @@ function createServiceUser(execlib,ParentUser){
   ServiceUser.prototype.__cleanUp = function(){
     ParentUser.prototype.__cleanUp.call(this);
   };
-  require('./common')(execlib,User);
+  require('./common')(execlib,ServiceUser);
 
   return ServiceUser;
 }

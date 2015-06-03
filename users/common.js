@@ -1,7 +1,7 @@
 function createUserCommons(execlib,klass){
   var lib = execlib.lib;
 
-  function reverseSet = function(state,item,itemname){
+  function reverseSet(state,item,itemname){
     state.set(itemname,item);
   }
   klass.prototype.fillState = function(prophash){
