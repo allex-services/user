@@ -7,11 +7,11 @@ function createUserCommons(execlib,klass){
   klass.prototype.fillState = function(prophash){
     lib.traverse(prophash,reverseSet.bind(null,this.state));
   }
-  klass.prototype.onAllSessionsDown = function(sessions){
-    lib.runNext(this.recheckSessions.bind(this,sessions),10000);
+  klass.prototype.onAllSessionsDown = function(){
+    lib.runNext(this.recheckSessions.bind(this),10000);
   };
-  klass.prototype.recheckSessions = function(sessions){
-    if(sessions.length<1){
+  klass.prototype.recheckSessions = function(){
+    if(this.sessions.length<1){
       this.destroy();
     }
   };
