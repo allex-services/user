@@ -1,4 +1,5 @@
 function createUserCommons(execlib,klass){
+  'use strict';
   var lib = execlib.lib;
 
   function reverseSet(state,item,itemname){

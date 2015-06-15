@@ -1,4 +1,5 @@
 function createUser(execlib,ParentUser){
+  'use strict';
   var execSuite = execlib.execSuite,
       taskRegistry = execSuite.taskRegistry;
 
