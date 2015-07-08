@@ -1,6 +1,9 @@
 module.exports = {
-  startConsuming: [{
-    title: 'Service name',
+  invoke: [{
+    title: 'Sink name',
     type: 'string'
+  },{
+    title: 'Method with params',
+    type: 'array'
   }]
 };
