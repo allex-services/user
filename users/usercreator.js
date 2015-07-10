@@ -9,8 +9,6 @@ function createUser(execlib,ParentUser){
   }
 
   function User(prophash){
-    console.trace();
-    console.log('WHO MADE ME?');
     ParentUser.call(this,prophash);
     this.fillState(prophash.profle);
     lib.traverse(this.remoteSinkInfo, this.startConsuming.bind(this));
