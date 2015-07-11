@@ -12,6 +12,9 @@ function createUserCommons(execlib,klass){
     lib.runNext(this.recheckSessions.bind(this),10000);
   };
   klass.prototype.recheckSessions = function(){
+    if(!this.sessions){
+      return;
+    }
     if(this.sessions.length<1){
       this.destroy();
     }
