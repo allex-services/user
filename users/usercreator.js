@@ -11,33 +11,16 @@ function createUser(execlib,ParentUser){
   function User(prophash){
     ParentUser.call(this,prophash);
     this.fillState(prophash.profle);
-    lib.traverse(this.remoteSinkInfo, this.startConsuming.bind(this));
+    lib.traverse(this.sinkInfo, this.startConsuming.bind(this));
   }
-  ParentUser.inherit(User,require('../methoddescriptors/user'),[/*visible state fields here*/]/*or a ctor for StateStream filter*/,require('../remotesinkinfo/user'));
-  function injector(obj, item, itemname) {
-    obj[itemname] = item;
-  }
-  function inheritRemoteSinkInfo(crsi, prsi) { //crsi => child remote sink info, ditto for parent
-    var ret = {};
-    var inject = injector.bind(null, ret);
-    lib.traverse(prsi, inject);
-    lib.traverse(crsi, inject);
-    return ret;
-  }
-  User.inherit = function (userChildCtor, methodDescriptors, stateFilterCtor, remoteSinkInfo) {
-    if(!remoteSinkInfo){
-      throw new lib.Error('NOT_A_USERSERVICE_USER_INHERIT',"A subclass of UserService's user role User did not provide the remoteSinkInfo to inherit as a 4th parameter");
-    }
-    ParentUser.inherit.call(this, userChildCtor, methodDescriptors, stateFilterCtor);
-    userChildCtor.prototype.remoteSinkInfo = inheritRemoteSinkInfo(remoteSinkInfo, this.prototype.remoteSinkInfo);
-  };
+  ParentUser.inherit(User,require('../methoddescriptors/user'),[/*visible state fields here*/]/*or a ctor for StateStream filter*/);
   User.prototype.__cleanUp = function(){
     ParentUser.prototype.__cleanUp.call(this);
   };
   User.prototype.onSinkFound = function(sinkname,sink){
-    var sinkspecs = this.remoteSinkInfo[sinkname];
+    var sinkspecs = this.sinkInfo.remote[sinkname];
     if (!sinkspecs) {
-      var e = new lib.Error('SINK_INFO_MISSING','Missing remoteSinkInfo entry for '+sinkname);
+      var e = new lib.Error('SINK_INFO_MISSING','Missing sinkInfo.remote entry for '+sinkname);
       e.sinkname = sinkname;
       throw e;
     }
