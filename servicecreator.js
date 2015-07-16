@@ -35,11 +35,11 @@ function createUserService(execlib,ParentServicePack){
     remote: []
   };
   UserService.prototype.createSubService = function (prophash, subsinkinfo){
-    console.log('startSubServiceStatically',subsinkinfo.modulename, subsinkinfo.name, this.createSubServicePropHash(prophash, subsinkinfo)); 
-    this.startSubServiceStatically(subsinkinfo.modulename, subsinkinfo.name, this.createSubServicePropHash(prophash, subsinkinfo)).done(
+    //console.log('startSubServiceStatically',subsinkinfo.modulename, subsinkinfo.name, this.createSubServicePropHash(prophash, subsinkinfo)); 
+    this.startSubServiceStatically(subsinkinfo.modulename, subsinkinfo.name, this.createSubServicePropHash(prophash, subsinkinfo));/*.done(
       console.log.bind(console,'startSubServiceStatically ok'),
       console.error.bind(console,'startSubServiceStatically nok')
-    );
+    );*/
   };
   UserService.prototype.createSubServicePropHash = function (prophash, subsinkinfo){
     var ret = {};
@@ -49,7 +49,6 @@ function createUserService(execlib,ParentServicePack){
   UserService.prototype.createSubServicePropHashItem = function (propertyhash, resultprophash, item, itemname) {
     if(lib.isString(item) && item.indexOf('{{')===0 && item.lastIndexOf('}}')===item.length-2){
       item = eval(item.substring(2,item.length-2));
-      console.log(item);
     }
     resultprophash[itemname] = item;
   };
