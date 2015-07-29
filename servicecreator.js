@@ -14,6 +14,7 @@ function createUserService(execlib,ParentServicePack){
   function UserService(prophash){
     ParentService.call(this,prophash);
     this.sinkInfo.local.forEach(this.createSubService.bind(this, prophash));
+    lib.traverseShallow(prophash.profile, this.profileItemToState.bind(this));
   }
   ParentService.inherit(UserService,factoryCreator);
   UserService.prototype.__cleanUp = function(){
@@ -51,6 +52,10 @@ function createUserService(execlib,ParentServicePack){
       item = eval(item.substring(2,item.length-2));
     }
     resultprophash[itemname] = item;
+  };
+  
+  UserService.prototype.profileItemToState = function (profitem, profitemname) {
+    this.state.set('profile/'+profitemname, profitem);
   };
 
   
