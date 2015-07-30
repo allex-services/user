@@ -2,6 +2,7 @@ function createUserService(execlib,ParentServicePack){
   'use strict';
   var lib = execlib.lib,
     ParentService = ParentServicePack.Service,
+    taskRegistry = execSuite.taskRegistry,
     arrymerger = require('./arraymerger')(execlib);
 
   function factoryCreator(parentFactory){
