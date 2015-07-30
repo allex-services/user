@@ -10,13 +10,14 @@ function createUser(execlib,ParentUser){
 
   function User(prophash){
     ParentUser.call(this,prophash);
-    this.fillState(prophash.profle);
-    lib.traverse(this.sinkInfo, this.startConsuming.bind(this));
+    //this.fillState(prophash.profle);
+    //lib.traverse(this.sinkInfo, this.startConsuming.bind(this));
   }
   ParentUser.inherit(User,require('../methoddescriptors/user'),[/*visible state fields here*/]/*or a ctor for StateStream filter*/);
   User.prototype.__cleanUp = function(){
     ParentUser.prototype.__cleanUp.call(this);
   };
+  /*
   User.prototype.onSinkFound = function(sinkname,sink){
     var sinkspecs = this.sinkInfo.remote[sinkname];
     if (!sinkspecs) {
@@ -38,6 +39,7 @@ function createUser(execlib,ParentUser){
       onSink: this.onSinkFound.bind(this, remotesinkname)
     });
   };
+  */
   require('./common')(execlib,User);
 
   return User;
