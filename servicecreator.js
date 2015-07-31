@@ -45,6 +45,7 @@ function createUserService(execlib,ParentServicePack){
   VolatileSubSink.prototype.onSink = function (sink) {
     this.sink = sink;
     if (sink) {
+      //console.log('VOLATILE ... ',this.sinkname);
       this.userservice.state.set('have'+this.sinkname,true);
       this.userservice.subservices.add(this.sinkname,sink);
     } else {
