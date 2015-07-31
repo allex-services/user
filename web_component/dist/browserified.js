@@ -114,14 +114,19 @@ function createUserSink(execlib,ParentSink){
     ParentSink.prototype.__cleanUp.call(this);
   };
 
-  UserSink.inherit = function (childSinkCtor, methodDescriptors, sinkInfo) {
+  UserSink.inherit = function (childSinkCtor, methodDescriptors, sinkInfo, remotesinknamearry) {
     if(!sinkInfo){
       throw new lib.Error('NOT_A_USERSERVICE_USERSINK_INHERIT',"A subclass of UserService's UserSink did not provide the sinkInfo to inherit as a 3rd parameter");
     }
     ParentSink.inherit.call(this, childSinkCtor, methodDescriptors);
     childSinkCtor.prototype.sinkInfo = arrymerger(sinkInfo, this.prototype.sinkInfo);
+    if (!lib.isArray(remotesinknamearry)) {
+      throw new lib.Error('NEW_INHERIT_FINGERPRINT_FOR_USERSINK', 'Missing the remotesinknamearray');
+    }
+    childSinkCtor.prototype.remoteSinkNames = arrymerger(remotesinknamearry, this.prototype.remoteSinkNames);
   };
   UserSink.prototype.sinkInfo = [];
+  UserSink.prototype.remoteSinkNames = [];
   return UserSink;
 }
 
