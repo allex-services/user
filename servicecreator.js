@@ -3,7 +3,8 @@ function createUserService(execlib,ParentServicePack){
   var lib = execlib.lib,
     ParentService = ParentServicePack.Service,
     taskRegistry = execlib.execSuite.taskRegistry,
-    arrymerger = require('./arraymerger')(execlib);
+    arrymerger = require('./arraymerger')(execlib),
+    VolatileSubSink = require('./volatilesubsinkhandlercreator')(execlib);
 
   function factoryCreator(parentFactory){
     return {
@@ -11,66 +12,6 @@ function createUserService(execlib,ParentServicePack){
       'user': require('./users/usercreator')(execlib,parentFactory.get('user')) 
     };
   }
-
-  function VolatileSubSink(userservice, sinkname, role) {
-    this.count = 1;
-    this.userservice = userservice;
-    this.sinkname = sinkname;
-    this.sink = null;
-    this.userServiceDestroyedListener = this.userservice.destroyed.attach(this.destroy.bind(this));
-    this.task = taskRegistry.run('findSink',{
-      sinkname: sinkname,
-      identity: {
-        name: this.userservice.name,
-        role: role || 'user'
-      },
-      onSink: this.onSink.bind(this)
-    });
-  }
-  VolatileSubSink.prototype.destroy = function () {
-    if (!this.userServiceDestroyedListener) {
-      return;
-    }
-    this.userservice.state.set('have'+this.sinkname,false);
-    this.userservice.state.remove('have'+this.sinkname);
-    this.userservice.subservices.remove(this.sinkname);
-    this.task.destroy();
-    this.task = null;
-    this.userServiceDestroyedListener.destroy();
-    this.userServiceDestroyedListener = null;
-    this.sinkname = null;
-    this.userservice = null;
-    this.count = null;
-  };
-  VolatileSubSink.prototype.onSink = function (sink) {
-    this.sink = sink;
-    if (sink) {
-      //console.log('VOLATILE ... ',this.sinkname);
-      this.userservice.state.set('have'+this.sinkname,true);
-      this.userservice.subservices.add(this.sinkname,sink);
-    } else {
-      this.destroy();
-    }
-  };
-  VolatileSubSink.prototype.inc = function () {
-    if('number' !== typeof(this.count)){
-      return;
-    }
-    this.count ++;
-  };
-  VolatileSubSink.prototype.dec = function () {
-    if('number' !== typeof(this.count)){
-      return;
-    }
-    this.count --;
-    if (this.count < 1) {
-      if (this.sink) {
-        this.sink.destroy();
-      } else {
-        this.destroy();
-      }
-    }
-  };
 
   function UserService(prophash){
     ParentService.call(this,prophash);
@@ -119,7 +60,7 @@ function createUserService(execlib,ParentServicePack){
     resultprophash[itemname] = item;
   };
   function remoteSinkInfoFinder(foundobj, rsi){
-    if (rsi.sinkname===foundobj.sinkname) {
+    if (rsi.sinkname===foundobj.name) {
       foundobj.found = rsi;
       return true;
     }
@@ -135,7 +76,7 @@ function createUserService(execlib,ParentServicePack){
         defer.reject(new lib.Error('INVALID_VOLATILE_SINK_NAME',sinkname));
         return;
       }
-      this.volatiles.add(sinkname, new VolatileSubSink(this, sinkname, rsi.found.role)); 
+      this.volatiles.add(sinkname, new VolatileSubSink(this, rsi.found)); 
     }
     defer.resolve('ok');
   };
