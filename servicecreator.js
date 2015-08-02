@@ -1,6 +1,7 @@
 function createUserService(execlib,ParentServicePack){
   'use strict';
   var lib = execlib.lib,
+    q = lib.q,
     ParentService = ParentServicePack.Service,
     taskRegistry = execlib.execSuite.taskRegistry,
     arrymerger = require('./arraymerger')(execlib),
@@ -60,25 +61,27 @@ function createUserService(execlib,ParentServicePack){
     resultprophash[itemname] = item;
   };
   function remoteSinkInfoFinder(foundobj, rsi){
-    if (rsi.sinkname===foundobj.name) {
+    if (rsi.name===foundobj.name) {
       foundobj.found = rsi;
       return true;
     }
   }
-  UserService.prototype.askForRemote = function (sinkname, defer){
+  UserService.prototype.askForRemote = function (sinkname, prophash, defer){
     var v = this.volatiles.get(sinkname), rsi;
+    defer = defer || q.defer();
     if (v) { //found an existing volatile sink
       v.inc();
     } else {
-      rsi = {sinkname:sinkname, found:null};
+      rsi = {name:sinkname, found:null};
       this.sinkInfo.remote.some(remoteSinkInfoFinder.bind(null,rsi));
       if (!rsi.found) {
         defer.reject(new lib.Error('INVALID_VOLATILE_SINK_NAME',sinkname));
-        return;
+        return defer.promise;
       }
-      this.volatiles.add(sinkname, new VolatileSubSink(this, rsi.found)); 
+      this.volatiles.add(sinkname, new VolatileSubSink(this, prophash, rsi.found)); 
     }
     defer.resolve('ok');
+    return defer.promise;
   };
   UserService.prototype.disposeOfRemote = function (sinkname, defer) {
     var v = this.volatiles.get(sinkname);

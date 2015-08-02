@@ -3,10 +3,11 @@ function createVolatileSubSinkHandler(execlib) {
   var lib = execlib.lib,
     taskRegistry = execlib.execSuite.taskRegistry;
 
-  function VolatileSubSink(userservice, sinkinfo) {
+  function VolatileSubSink(userservice, prophash, sinkinfo) {
     this.count = 1;
     this.userservice = userservice;
     this.sinkinfo = sinkinfo;
+    this.prophash = prophash;
     this.sink = null;
     this.userServiceDestroyedListener = this.userservice.destroyed.attach(this.destroy.bind(this));
     this.task = taskRegistry.run('findSink',{
@@ -28,7 +29,8 @@ function createVolatileSubSinkHandler(execlib) {
     this.task = null;
     this.userServiceDestroyedListener.destroy();
     this.userServiceDestroyedListener = null;
-    this.sinkname = null;
+    this.sink = null;
+    this.prophash = null;
     this.userservice = null;
     this.count = null;
   };
@@ -36,14 +38,19 @@ function createVolatileSubSinkHandler(execlib) {
     return this.sinkinfo.sinkname || this.sinkinfo.name;
   };
   VolatileSubSink.prototype.localSubSinkName = function () {
+    if (!this.sinkinfo.name) {
+      console.error(this.sinkinfo);
+      throw new lib.Error('NO_LOCAL_SUBSINK_NAME');
+    }
     return this.sinkinfo.name;
   };
   function propAppender(obj,item,itemname) {
     obj[itemname] = item;
   }
   VolatileSubSink.prototype.identity = function () {
-    var ret = {};
-    lib.traverseShallow(this.sinkinfo.identity||{},propAppender.bind(null,ret));
+    var ret = {}, appender = propAppender.bind(null,ret);
+    lib.traverseShallow(this.sinkinfo.identity||{}, appender);
+    lib.traverseShallow(this.prophash||{}, appender);
     ret.name = this.userservice.name;
     ret.role = ret.role || 'user';
     return ret;
@@ -52,7 +59,7 @@ function createVolatileSubSinkHandler(execlib) {
     var lssn = this.localSubSinkName();
     this.sink = sink;
     if (sink) {
-      //console.log('VOLATILE ... ',this.sinkname);
+      //console.log('VOLATILE ... ',lssn);
       this.userservice.state.set('have'+lssn,true);
       this.userservice.subservices.add(lssn,sink);
     } else {

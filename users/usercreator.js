@@ -16,8 +16,8 @@ function createUser(execlib,ParentUser){
     ParentUser.prototype.__cleanUp.call(this);
   };
 
-  User.prototype.askForRemote = function (sinkname, defer) {
-    this.__service.askForRemote(sinkname, defer);
+  User.prototype.askForRemote = function (sinkname, prophash, defer) {
+    this.__service.askForRemote(sinkname, prophash, defer);
   };
 
   User.prototype.disposeOfRemote = function (sinkname, defer) {
