@@ -17,6 +17,7 @@ function createUserService(execlib,ParentServicePack){
   function UserService(prophash){
     ParentService.call(this,prophash);
     this.name = prophash.name;
+    this.role = prophash.role;
     this.volatiles = new lib.Map();
     this.sinkInfo.local.forEach(this.createSubService.bind(this, prophash));
     lib.traverseShallow(prophash.profile, this.profileItemToState.bind(this));
@@ -78,6 +79,7 @@ function createUserService(execlib,ParentServicePack){
         defer.reject(new lib.Error('INVALID_VOLATILE_SINK_NAME',sinkname));
         return defer.promise;
       }
+      //console.log('new VolatileSubSink', prophash);
       this.volatiles.add(sinkname, new VolatileSubSink(this, prophash, rsi.found)); 
     }
     defer.resolve('ok');

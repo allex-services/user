@@ -10,6 +10,7 @@ function createVolatileSubSinkHandler(execlib) {
     this.prophash = prophash;
     this.sink = null;
     this.userServiceDestroyedListener = this.userservice.destroyed.attach(this.destroy.bind(this));
+    //console.log('Volatile is out to findSink',this.remoteSinkName(),'with identity',this.identity());
     this.task = taskRegistry.run('findSink',{
       sinkname: this.remoteSinkName(),
       identity: this.identity(),
@@ -50,6 +51,7 @@ function createVolatileSubSinkHandler(execlib) {
   VolatileSubSink.prototype.identity = function () {
     var ret = {}, appender = propAppender.bind(null,ret);
     lib.traverseShallow(this.sinkinfo.identity||{}, appender);
+    //console.log('VolatileSubSink adding prophash', this.prophash);
     lib.traverseShallow(this.prophash||{}, appender);
     ret.name = this.userservice.name;
     ret.role = ret.role || 'user';
