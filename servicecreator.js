@@ -18,9 +18,9 @@ function createUserService(execlib,ParentServicePack){
     ParentService.call(this,prophash);
     this.name = prophash.name;
     this.role = prophash.role;
+    lib.traverseShallow(prophash.profile, this.profileItemToState.bind(this));
     this.volatiles = new lib.Map();
     this.sinkInfo.local.forEach(this.createSubService.bind(this, prophash));
-    lib.traverseShallow(prophash.profile, this.profileItemToState.bind(this));
   }
   ParentService.inherit(UserService,factoryCreator);
   UserService.prototype.__cleanUp = function(){
