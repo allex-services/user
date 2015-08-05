@@ -18,11 +18,16 @@ function createVolatileSubSinkHandler(execlib) {
     });
   }
   VolatileSubSink.prototype.destroy = function () {
-    var lssn;
+    var lssn, ondownwaitermethodname, ondownwaitermethod;
     if (!this.userServiceDestroyedListener) {
       return;
     }
     lssn = this.localSubSinkName();
+    ondownwaitermethodname = '_on_'+lssn+'_Down';
+    ondownwaitermethod = this.userservice[ondownwaitermethodname];
+    if ('function' === typeof ondownwaitermethod) {
+        ondownwaitermethod.call(this.userservice);
+    };
     this.userservice.state.set('have'+lssn,false);
     this.userservice.state.remove('have'+lssn);
     this.userservice.subservices.remove(lssn);
@@ -58,10 +63,21 @@ function createVolatileSubSinkHandler(execlib) {
     return ret;
   };
   VolatileSubSink.prototype.onSink = function (sink) {
-    var lssn = this.localSubSinkName();
+    var lssn = this.localSubSinkName(), onstartedwaitermethodname, onstartedwaitermethod, ssw;
     this.sink = sink;
     if (sink) {
       //console.log('VOLATILE ... ',lssn);
+      onstartedwaitermethodname = '_on_'+lssn+'_Ready';
+      onstartedwaitermethod = this.userservice[onstartedwaitermethodname];
+      if ('function' === typeof onstartedwaitermethod) {
+          onstartedwaitermethod.call(this.userservice, sink);
+      };
+      ssw = this.userservice.subSinkWaiters.remove(lssn);
+      if (ssw) {
+        while (ssw.length) {
+          ssw.pop()(sink);
+        }
+      }
       this.userservice.state.set('have'+lssn,true);
       this.userservice.subservices.add(lssn,sink);
     } else {
