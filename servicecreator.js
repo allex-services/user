@@ -55,6 +55,21 @@ function createUserService(execlib,ParentServicePack){
     local: [],
     remote: []
   };
+  function sinkinfofinder (findobj, item) {
+    if (item.name === findobj.name) {
+      findobj.value = item[findobj.field];
+      return true;
+    }
+  }
+  UserService.prototype.sinkInfoData = function (groupname, sinkinfoname, sinkinfofield) {
+    var retobj = {name: sinkinfoname, field: sinkinfofield};
+    var group = this.sinkInfo[groupname];
+    if (!group) {
+      return;
+    }
+    group.some(sinkinfofinder.bind(null, retobj));
+    return retobj.value;
+  };
   UserService.prototype.createSubService = function (prophash, subsinkinfo){
     this.startSubServiceStatically(subsinkinfo.modulename, subsinkinfo.name, this.createSubServicePropHash(prophash, subsinkinfo));
   };
