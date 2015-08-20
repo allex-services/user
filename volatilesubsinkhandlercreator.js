@@ -78,8 +78,7 @@ function createVolatileSubSinkHandler(execlib) {
           ssw.pop()(sink);
         }
       }
-      this.userservice.state.set('have'+lssn,true);
-      this.userservice.subservices.add(lssn,sink);
+      this.userservice._activateStaticSubService(lssn, sink);
     } else {
       this.destroy();
     }
