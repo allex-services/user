@@ -20,14 +20,10 @@ function createUserService(execlib,ParentServicePack){
     this.role = prophash.role;
     lib.traverseShallow(prophash.profile, this.profileItemToState.bind(this));
     this.volatiles = new lib.Map();
-    this.subSinkWaiters = new lib.Map();
     this.sinkInfo.local.forEach(this.createSubService.bind(this, prophash));
   }
   ParentService.inherit(UserService,factoryCreator);
   UserService.prototype.__cleanUp = function(){
-    lib.containerDestroyAll(this.subSinkWaiters);
-    this.subSinkWaiters.destroy();
-    this.subSinkWaiters = null;
     lib.containerDestroyAll(this.volatiles);
     this.volatiles.destroy();
     this.volatiles = null;
@@ -118,23 +114,6 @@ function createUserService(execlib,ParentServicePack){
   
   UserService.prototype.profileItemToState = function (profitem, profitemname) {
     this.state.set('profile/'+profitemname, profitem);
-  };
-
-  UserService.prototype.acquireSubSink = function (subsinkname, cb) {
-    var ss = this.subservices.get(subsinkname);
-    if (ss) {
-      cb(ss);
-      return;
-    }
-    this.waitForSubSink(subsinkname, cb);
-  };
-  UserService.prototype.waitForSubSink = function (subsinkname, cb) {
-    var ssws = this.subSinkWaiters.get(subsinkname);
-    if (!ssws) {
-      ssws = new lib.Fifo();
-      this.subSinkWaiters.add(subsinkname, ssws);
-    }
-    ssws.push(cb);
   };
 
   

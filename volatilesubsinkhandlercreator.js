@@ -63,21 +63,9 @@ function createVolatileSubSinkHandler(execlib) {
     return ret;
   };
   VolatileSubSink.prototype.onSink = function (sink) {
-    var lssn = this.localSubSinkName(), onstartedwaitermethodname, onstartedwaitermethod, ssw;
+    var lssn = this.localSubSinkName(), ssw;
     this.sink = sink;
     if (sink) {
-      //console.log('VOLATILE ... ',lssn);
-      onstartedwaitermethodname = '_on_'+lssn+'_Ready';
-      onstartedwaitermethod = this.userservice[onstartedwaitermethodname];
-      if ('function' === typeof onstartedwaitermethod) {
-          onstartedwaitermethod.call(this.userservice, sink);
-      };
-      ssw = this.userservice.subSinkWaiters.remove(lssn);
-      if (ssw) {
-        while (ssw.length) {
-          ssw.pop()(sink);
-        }
-      }
       this.userservice._activateStaticSubService(lssn, sink);
     } else {
       this.destroy();
