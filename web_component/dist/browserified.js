@@ -56,6 +56,9 @@ module.exports = {
   'askForRemote' : [{
     title:'Sinkname',
     type:'string'
+  },{
+    title: 'Property hash for identity',
+    type: 'object'
   }],
   'disposeOfRemote' : [{
     title:'Sinkname',
@@ -114,6 +117,7 @@ function createUserSink(execlib,ParentSink){
     ParentSink.prototype.__cleanUp.call(this);
   };
 
+  /*
   UserSink.inherit = function (childSinkCtor, methodDescriptors, sinkInfo, remotesinknamearry) {
     if(!sinkInfo){
       throw new lib.Error('NOT_A_USERSERVICE_USERSINK_INHERIT',"A subclass of UserService's UserSink did not provide the sinkInfo to inherit as a 3rd parameter");
@@ -123,9 +127,22 @@ function createUserSink(execlib,ParentSink){
     if (!lib.isArray(remotesinknamearry)) {
       throw new lib.Error('NEW_INHERIT_FINGERPRINT_FOR_USERSINK', 'Missing the remotesinknamearray');
     }
-    childSinkCtor.prototype.remoteSinkNames = arrymerger(remotesinknamearry, this.prototype.remoteSinkNames);
+    childSinkCtor.prototype.remoteSinkNames = lib.arryOperations.union(remotesinknamearry, this.prototype.remoteSinkNames);
   };
   UserSink.prototype.sinkInfo = [];
+  */
+  UserSink.inherit = function (childSinkCtor, methodDescriptors, localsinknamearry, remotesinknamearry) {
+    if(!localsinknamearry){
+      throw new lib.Error('NOT_A_USERSERVICE_USERSINK_INHERIT',"A subclass of UserService's UserSink did not provide the local sink name array to inherit as a 3rd parameter");
+    }
+    ParentSink.inherit.call(this, childSinkCtor, methodDescriptors);
+    childSinkCtor.prototype.localSinkNames = lib.arryOperations.union(localsinknamearry, this.prototype.localSinkNames);
+    if (!lib.isArray(remotesinknamearry)) {
+      throw new lib.Error('NEW_INHERIT_FINGERPRINT_FOR_USERSINK', 'Missing the remotesinknamearray');
+    }
+    childSinkCtor.prototype.remoteSinkNames = lib.arryOperations.union(remotesinknamearry, this.prototype.remoteSinkNames);
+  };
+  UserSink.prototype.localSinkNames = [];
   UserSink.prototype.remoteSinkNames = [];
   return UserSink;
 }

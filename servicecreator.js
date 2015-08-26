@@ -113,7 +113,7 @@ function createUserService(execlib,ParentServicePack){
   };
   
   UserService.prototype.profileItemToState = function (profitem, profitemname) {
-    this.state.set('profile/'+profitemname, profitem);
+    this.state.set('profile_'+profitemname, profitem);
   };
 
   
