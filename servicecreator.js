@@ -31,11 +31,6 @@ function createUserService(execlib,ParentServicePack){
     this.name = null;
     ParentService.prototype.__cleanUp.call(this);
   };
-  UserService.prototype.close = function () {
-    while (this.volatiles.count) {
-
-    }
-  };
 
   UserService.inherit = function (serviceChildCtor, factoryProducer, additionalParentServices, sinkInfo) {
     if(!sinkInfo){
@@ -105,11 +100,13 @@ function createUserService(execlib,ParentServicePack){
     return defer.promise;
   };
   UserService.prototype.disposeOfRemote = function (sinkname, defer) {
+    defer = defer || q.defer();
     var v = this.volatiles.get(sinkname);
     if (v) {
       v.dec();
     }
     defer.resolve('ok');
+    return defer.promise;
   };
   
   UserService.prototype.profileItemToState = function (profitem, profitemname) {

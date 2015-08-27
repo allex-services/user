@@ -23,6 +23,7 @@ function createVolatileSubSinkHandler(execlib) {
       return;
     }
     lssn = this.localSubSinkName();
+    //console.log('Volatile', lssn, 'is dying');
     ondownwaitermethodname = '_on_'+lssn+'_Down';
     ondownwaitermethod = this.userservice[ondownwaitermethodname];
     if ('function' === typeof ondownwaitermethod) {
@@ -31,6 +32,7 @@ function createVolatileSubSinkHandler(execlib) {
     this.userservice.state.set('have'+lssn,false);
     this.userservice.state.remove('have'+lssn);
     this.userservice.subservices.remove(lssn);
+    this.userservice.volatiles.remove(lssn);
     this.task.destroy();
     this.task = null;
     this.userServiceDestroyedListener.destroy();
@@ -63,6 +65,7 @@ function createVolatileSubSinkHandler(execlib) {
     return ret;
   };
   VolatileSubSink.prototype.onSink = function (sink) {
+    //console.log('VolatileSubSink onSink', sink);
     var lssn = this.localSubSinkName(), ssw;
     this.sink = sink;
     if (sink) {
