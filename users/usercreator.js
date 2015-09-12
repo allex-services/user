@@ -23,6 +23,15 @@ function createUser(execlib,ParentUser){
   User.prototype.disposeOfRemote = function (sinkname, defer) {
     this.__service.disposeOfRemote(sinkname, defer);
   };
+
+  User.prototype.readData = function (subservicename, filter, defer) {
+    if (!this.__service) {
+      defer.reject(new lib.Error('SERVICE_DOWN', 'Service is down'));
+      return;
+    }
+    this.__service.readData(subservicename, filter, defer);
+  };
+
   require('./common')(execlib,User);
 
   return User;

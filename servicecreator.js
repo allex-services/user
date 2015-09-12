@@ -113,6 +113,19 @@ function createUserService(execlib,ParentServicePack){
     this.state.set('profile_'+profitemname, profitem);
   };
 
+  UserService.prototype.readData = function (subservicename, filter, defer) {
+    var ss = this.subservices.get(subservicename);
+    if (!ss) {
+      defer.reject(new lib.Error('NO_SUBSERVICE', 'No subservice named '+subservicename));
+      return;
+    }
+    taskRegistry.run('streamFromDataSink', {
+      sink: ss,
+      filter: filter,
+      defer: defer
+    });
+  };
+
   
   return UserService;
 }

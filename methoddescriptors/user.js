@@ -9,5 +9,12 @@ module.exports = {
   'disposeOfRemote' : [{
     title:'Sinkname',
     type:'string'
+  }],
+  'readData': [{
+    title: 'SubService name',
+    type: 'string'
+  },{
+    title: 'Filter',
+    type: 'object'
   }]
 };
