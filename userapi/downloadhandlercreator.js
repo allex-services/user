@@ -51,7 +51,6 @@ function createDownloadHandler(execlib, SinkHandler) {
     defer.resolve(cgisink);
   };
   DownloadHandler.prototype.onDownloadStarted = function (originalprophash, findandruntask, cgievent) {
-    console.log('onDownloadStarted', arguments);
     if (this.downloadcb) {
       return this.downloadcb(findandruntask, cgievent);
     }
