@@ -50,9 +50,10 @@ function createDownloadHandler(execlib, SinkHandler) {
     this.service.set(this.downloadslugname, 'http://'+cgiaddress+':'+cgiport+'/_'+id);
     defer.resolve(cgisink);
   };
-  DownloadHandler.prototype.onDownloadStarted = function (findandruntask, originalprophash) {
+  DownloadHandler.prototype.onDownloadStarted = function (originalprophash, findandruntask, cgievent) {
+    console.log('onDownloadStarted', arguments);
     if (this.downloadcb) {
-      return this.downloadcb(originalprophash);
+      return this.downloadcb(findandruntask, cgievent);
     }
   };
 
