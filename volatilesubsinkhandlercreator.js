@@ -69,6 +69,13 @@ function createVolatileSubSinkHandler(execlib) {
     var lssn = this.localSubSinkName(), ssw;
     this.sink = sink;
     if (sink) {
+      if (this.sinkinfo.materialize) {
+        if (this.sinkinfo.materialize.state) {
+          taskRegistry.run('materializeState', {
+            sink: sink
+          });
+        }
+      }
       this.userservice._activateStaticSubService(lssn, sink);
     } else {
       this.destroy();
