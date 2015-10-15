@@ -50,6 +50,9 @@ function createVolatileSubSinkHandler(execlib) {
       console.error(this.sinkinfo);
       throw new lib.Error('NO_LOCAL_SUBSINK_NAME');
     }
+    if (lib.isArray(this.sinkinfo.name)) {
+      return this.sinkinfo.name[this.sinkinfo.name.length-1];
+    }
     return this.sinkinfo.name;
   };
   function propAppender(obj,item,itemname) {
