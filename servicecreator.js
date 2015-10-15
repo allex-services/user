@@ -3,7 +3,9 @@ function createUserService(execlib,ParentServicePack){
   var lib = execlib.lib,
     q = lib.q,
     ParentService = ParentServicePack.Service,
-    taskRegistry = execlib.execSuite.taskRegistry,
+    execSuite = execlib.execSuite,
+    nameOfRemoteSinkDescriptor = execSuite.userServiceSuite.nameOfRemoteSinkDescriptor,
+    taskRegistry = execSuite.taskRegistry,
     arrymerger = require('./arraymerger')(execlib),
     VolatileSubSink = require('./volatilesubsinkhandlercreator')(execlib);
 
@@ -76,7 +78,7 @@ function createUserService(execlib,ParentServicePack){
     resultprophash[itemname] = item;
   };
   function remoteSinkInfoFinder(foundobj, rsi){
-    if (rsi.name===foundobj.name) {
+    if (nameOfRemoteSinkDescriptor(rsi) === foundobj.name) {
       foundobj.found = rsi;
       return true;
     }

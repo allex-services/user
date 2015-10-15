@@ -12,7 +12,21 @@ function createUserServiceSuite (execlib) {
     CsvFile = require('./csvfilecreator')(execlib, DynamicFile),
     PdfFile = require('./pdffilecreator')(execlib, DynamicFile);
 
+  function nameOfRemoteSinkDescriptor (sinkinfo) {
+    if (lib.isArray(sinkinfo.name)) {
+      return sinkinfo.name[sinkinfo.name.length-1];
+    }
+    if (!sinkinfo.name) {
+      console.error(sinkinfo);
+      throw new lib.Error('NO_LOCAL_SUBSINK_NAME');
+    }
+
+    return sinkinfo.name;
+  }
+
+
   return {
+    nameOfRemoteSinkDescriptor: nameOfRemoteSinkDescriptor,
     SinkHandler: SinkHandler,
     LocalSinkHandler: LocalSinkHandler,
     RemoteSinkHandler: RemoteSinkHandler,

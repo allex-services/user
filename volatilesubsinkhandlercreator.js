@@ -1,7 +1,9 @@
 function createVolatileSubSinkHandler(execlib) {
   'use strict';
   var lib = execlib.lib,
-    taskRegistry = execlib.execSuite.taskRegistry;
+    execSuite = execlib.execSuite,
+    nameOfRemoteSinkDescriptor = execSuite.userServiceSuite.nameOfRemoteSinkDescriptor,
+    taskRegistry = execSuite.taskRegistry;
 
   function VolatileSubSink(userservice, prophash, sinkinfo) {
     this.count = 1;
@@ -42,18 +44,13 @@ function createVolatileSubSinkHandler(execlib) {
     this.userservice = null;
     this.count = null;
   };
+
   VolatileSubSink.prototype.remoteSinkName = function () {
     return this.sinkinfo.sinkname || this.sinkinfo.name;
   };
+
   VolatileSubSink.prototype.localSubSinkName = function () {
-    if (!this.sinkinfo.name) {
-      console.error(this.sinkinfo);
-      throw new lib.Error('NO_LOCAL_SUBSINK_NAME');
-    }
-    if (lib.isArray(this.sinkinfo.name)) {
-      return this.sinkinfo.name[this.sinkinfo.name.length-1];
-    }
-    return this.sinkinfo.name;
+    return nameOfRemoteSinkDescriptor(this.sinkinfo);
   };
   function propAppender(obj,item,itemname) {
     obj[itemname] = item;
