@@ -40,6 +40,11 @@ ALLEX.execSuite.registry.add('allex_userservice',require('./clientside')(ALLEX, 
 
 },{"./clientside":3}],3:[function(require,module,exports){
 function createClientSide(execlib, ParentServicePack){
+  if (!execlib.execSuite.userServiceSuite) {
+    execlib.execSuite.userServiceSuite = {
+      nameOfRemoteSinkDescriptor: require('./userapi/nameofremotesinkdescriptorcreator')(execlib)
+    };
+  }
   return {
     SinkMap: require('./sinkmapcreator')(execlib,ParentServicePack)
   };
@@ -47,7 +52,7 @@ function createClientSide(execlib, ParentServicePack){
 
 module.exports = createClientSide;
 
-},{"./sinkmapcreator":6}],4:[function(require,module,exports){
+},{"./sinkmapcreator":6,"./userapi/nameofremotesinkdescriptorcreator":9}],4:[function(require,module,exports){
 module.exports = {
 };
 
@@ -156,4 +161,23 @@ function createUserSink(execlib,ParentSink){
 
 module.exports = createUserSink;
 
-},{"../arraymerger":1,"../methoddescriptors/user":5}]},{},[2]);
+},{"../arraymerger":1,"../methoddescriptors/user":5}],9:[function(require,module,exports){
+function createNameOfRemoteDescptorFunc(execlib) {
+  'use strict';
+  var lib = execlib.lib;
+  return function nameOfRemoteSinkDescriptor (sinkinfo) {
+    if (lib.isArray(sinkinfo.name)) {
+      return sinkinfo.name[sinkinfo.name.length-1];
+    }
+    if (!sinkinfo.name) {
+      console.error(sinkinfo);
+      throw new lib.Error('NO_LOCAL_SUBSINK_NAME');
+    }
+
+    return sinkinfo.name;
+  }
+}
+
+module.exports = createNameOfRemoteDescptorFunc;
+
+},{}]},{},[2]);
