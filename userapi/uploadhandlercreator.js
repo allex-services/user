@@ -86,7 +86,9 @@ function createUploadHandler(execlib, SinkHandler) {
   };
   UploadHandler.prototype.onUploadSuccess = lib.dummyFunc;
   UploadHandler.prototype.deactivate = function () {
-    this.service.state.remove(this.uploadslugname);
+    if (this.service && this.service.state) {
+      this.service.state.remove(this.uploadslugname);
+    }
     return SinkHandler.prototype.deactivate.call(this);
   };
 

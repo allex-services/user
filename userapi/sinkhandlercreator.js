@@ -15,6 +15,7 @@ function createSinkHandler(execlib) {
     if (this.sink) {
       this.sink.destroy();
     }
+    this.sink = null;
   };
   SinkHandler.prototype._onSink = function (sink) {
     this.sink = sink;
