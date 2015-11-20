@@ -57,11 +57,11 @@ function createVolatileSubSinkHandler(execlib) {
   }
   VolatileSubSink.prototype.identity = function () {
     var ret = {}, appender = propAppender.bind(null,ret);
-    lib.traverseShallow(this.sinkinfo.identity||{}, appender);
+    //lib.traverseShallow(this.sinkinfo.identity||{}, appender);
     //console.log('VolatileSubSink adding prophash', this.prophash);
     lib.traverseShallow(this.prophash||{}, appender);
     ret.name = this.userservice.name;
-    ret.role = ret.role || 'user';
+    ret.role = this.sinkinfo.role || 'user';
     return ret;
   };
   VolatileSubSink.prototype.onSink = function (sink) {
@@ -78,7 +78,7 @@ function createVolatileSubSinkHandler(execlib) {
       }
       this.userservice._activateStaticSubService(lssn, sink);
     } else {
-      this.destroy();
+      //this.destroy();
     }
   };
   VolatileSubSink.prototype.inc = function () {
