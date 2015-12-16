@@ -75,6 +75,12 @@ function createVolatileSubSinkHandler(execlib) {
     }
   };
   VolatileSubSink.prototype.reportSinkDown = function () {
+    if (!(this.userservice && this.userservice.state)) {
+      if (this.userServiceDestroyedListener) {
+        this.destroy();
+      }
+      return;
+    }
     var lssn, ondownwaitermethodname, ondownwaitermethod;
     lssn = this.localSubSinkName();
     ondownwaitermethodname = '_on_'+lssn+'_Down';
