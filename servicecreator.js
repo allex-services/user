@@ -80,17 +80,18 @@ function createUserService(execlib,ParentServicePack){
   function remoteSinkInfoFinder(foundobj, rsi){
     if (nameOfRemoteSinkDescriptor(rsi) === foundobj.name) {
       foundobj.found = rsi;
+      foundobj.role = rsi.role;
       return true;
     }
   }
+
   UserService.prototype.askForRemote = function (sinkname, prophash, defer){
     var v = this.volatiles.get(sinkname), rsi;
     defer = defer || q.defer();
     if (v) { //found an existing volatile sink
       v.inc();
     } else {
-      rsi = {name:sinkname, found:null};
-      this.sinkInfo.remote.some(remoteSinkInfoFinder.bind(null,rsi));
+      rsi = this.getSinkInfo(sinkname);
       if (!rsi.found) {
         defer.reject(new lib.Error('INVALID_VOLATILE_SINK_NAME',sinkname));
         return defer.promise;
@@ -101,6 +102,13 @@ function createUserService(execlib,ParentServicePack){
     defer.resolve('ok');
     return defer.promise;
   };
+
+  UserService.prototype.getSinkInfo = function (sinkname) {
+    var rsi = {name:sinkname, found:null, role: null};
+    this.sinkInfo.remote.some(remoteSinkInfoFinder.bind(null,rsi));
+    return rsi;
+  };
+
   UserService.prototype.disposeOfRemote = function (sinkname, defer) {
     defer = defer || q.defer();
     var v = this.volatiles.get(sinkname);
@@ -126,6 +134,16 @@ function createUserService(execlib,ParentServicePack){
       filter: filter,
       defer: defer
     });
+  };
+
+  UserService.prototype.preProcessSubconnectIdentity = function (subservicename, userspec) {
+    var rsi = this.getSinkInfo(subservicename);
+    //console.log('preProcessSubconnectIdentity ', subservicename, userspec, rsi);
+    if (rsi.found && rsi.role) {
+      //console.log('preProcessSubconnectIdentity will update role to: ', rsi.role);
+      userspec.role = rsi.role;
+    }
+    return userspec;
   };
 
   
