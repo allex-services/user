@@ -69,6 +69,7 @@ function createVolatileSubSinkHandler(execlib) {
           });
         }
       }
+      //console.log('adding sink ....', lssn);
       this.userservice._activateStaticSubService(lssn, sink);
     } else {
       this.reportSinkDown();
@@ -76,6 +77,7 @@ function createVolatileSubSinkHandler(execlib) {
   };
   VolatileSubSink.prototype.reportSinkDown = function () {
     if (!(this.userservice && this.userservice.state)) {
+      console.log('Volatile will die on Sink down');
       if (this.userServiceDestroyedListener) {
         this.destroy();
       }

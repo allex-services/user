@@ -142,6 +142,9 @@ function createUserService(execlib,ParentServicePack){
     if (rsi.found && rsi.role) {
       //console.log('preProcessSubconnectIdentity will update role to: ', rsi.role);
       userspec.role = rsi.role;
+
+      var vg = this.volatiles.get(subservicename);
+      if (vg) lib.extend(userspec, vg.prophash);
     }
     return userspec;
   };
