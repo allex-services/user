@@ -10,6 +10,7 @@ function createUserCommons(execlib,klass){
   klass.prototype.fillState = function(prophash){
     lib.traverse(prophash,reverseSet.bind(null,this.state));
   }
+  /* keeping this here for historic reasons only
   klass.prototype.onAllSessionsDown = function(){
     lib.runNext(this.recheckSessions.bind(this),10000);
   };
@@ -21,6 +22,7 @@ function createUserCommons(execlib,klass){
       this.destroy();
     }
   };
+  */
 }
 
 module.exports = createUserCommons;
