@@ -90,8 +90,11 @@ function createVolatileSubSinkHandler(execlib) {
     if ('function' === typeof ondownwaitermethod) {
         ondownwaitermethod.call(this.userservice);
     };
-    this.userservice.subservices.remove(lssn);
+    var ss = this.userservice.subservices.remove(lssn);
     this.userservice.state.remove('have'+lssn);
+    if (ss && ss.destroyed) {
+      ss.destroy();
+    }
   };
   VolatileSubSink.prototype.inc = function () {
     if('number' !== typeof(this.count)){

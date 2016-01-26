@@ -44,6 +44,10 @@ function createUserService(execlib,ParentServicePack){
       local: arrymerger(sinkInfo.local, this.prototype.sinkInfo.local)
     };
   };
+  UserService.prototype.close = function () {
+    lib.containerDestroyAll(this.volatiles);
+    ParentService.prototype.close.call(this);
+  };
   UserService.prototype.sinkInfo = {
     local: [],
     remote: []
