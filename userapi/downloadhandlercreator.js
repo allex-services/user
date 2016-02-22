@@ -22,6 +22,7 @@ function createDownloadHandler(execlib, SinkHandler) {
   DownloadHandler.prototype.acquireSink = function (defer) {
     taskRegistry.run('findAndRun', {
       program: {
+        continuous: true,
         sinkname: this.cgiservicename,
         identity: {name: 'user', role: 'user'},
         task: {
@@ -47,7 +48,7 @@ function createDownloadHandler(execlib, SinkHandler) {
       defer.reject(new lib.Error('NO_SINK'));
       return;
     }
-    this.service.set(this.downloadslugname, 'http://'+cgiaddress+':'+cgiport+'/_'+id);
+    this.service.state.set(this.downloadslugname, 'http://'+cgiaddress+':'+cgiport+'/_'+id);
     defer.resolve(cgisink);
   };
   DownloadHandler.prototype.onDownloadStarted = function (originalprophash, findandruntask, cgievent) {

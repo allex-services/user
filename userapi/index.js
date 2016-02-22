@@ -10,10 +10,9 @@ function createUserServiceSuite (execlib) {
     DownloadHandler = require('./downloadhandlercreator')(execlib, SinkHandler),
     DynamicFile = require('./dynamicfilecreator')(execlib),
     CsvFile = require('./csvfilecreator')(execlib, DynamicFile),
-    PdfFile = require('./pdffilecreator')(execlib, DynamicFile);
-
-  
-
+    PdfFile = require('./pdffilecreator')(execlib, DynamicFile),
+    PlainTextFile = require('./plaintextfilecreator')(execlib, DynamicFile),
+    StreamingFile = require('./steamingfilecreator')(execlib, DynamicFile);
 
   return {
     nameOfRemoteSinkDescriptor: require('./nameofremotesinkdescriptorcreator')(execlib),
@@ -25,7 +24,9 @@ function createUserServiceSuite (execlib) {
     fileSuite: {
       DynamicFile: DynamicFile,
       CsvFile: CsvFile,
-      PdfFile: PdfFile
+      PdfFile: PdfFile,
+      PlainTextFile: PlainTextFile,
+      StreamingFile: StreamingFile
     }
   };
 }
