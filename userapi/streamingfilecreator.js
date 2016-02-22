@@ -6,10 +6,12 @@ function createStreamingFile (execlib, DynamicFile) {
   function StreamingFile(filename, content_type, destroyables){
     DynamicFile.call(this, filename, destroyables);
     this.content_type = content_type;
+    this.buffer = new Buffer(0);
     this.closed = false;
   }
   lib.inherit(StreamingFile, DynamicFile);
   StreamingFile.prototype.destroy = function () {
+    this.buffer = null;
     this.content_type = null;
     this.closed = null;
     DynamicFile.prototype.destroy.call(this);
@@ -32,14 +34,12 @@ function createStreamingFile (execlib, DynamicFile) {
   StreamingFile.prototype.getPayload = function () {
     console.log('will ask for payload ...');
     if (!this.buffer) {
-      console.log('=============================>>> will return');
       return null;
     }
     var b = this.buffer;
     if (!this.closed) this.buffer = new Buffer(0);
     return b;
   };
-  console.log('OVO JE GOTOVO ...');
   return StreamingFile;
 }
 
