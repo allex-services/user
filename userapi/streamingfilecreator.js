@@ -31,7 +31,10 @@ function createStreamingFile (execlib, DynamicFile) {
 
   StreamingFile.prototype.getPayload = function () {
     console.log('will ask for payload ...');
-    if (!this.buffer) return null;
+    if (!this.buffer) {
+      console.log('=============================>>> will return');
+      return null;
+    }
     var b = this.buffer;
     if (!this.closed) this.buffer = new Buffer(0);
     return b;
