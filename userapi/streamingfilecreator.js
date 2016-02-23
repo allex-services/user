@@ -23,16 +23,15 @@ function createStreamingFile (execlib, DynamicFile) {
   };
 
   StreamingFile.prototype.addBuffer = function (buff) {
-    this.buffer.concat(buff);
+    this.buffer = Buffer.concat(this.buffer, buff);
   };
 
   StreamingFile.prototype.close = function () {
-    console.log('will close the streaming file..');
+    //console.log('will close the streaming file..');
     this.closed = true;
   };
 
   StreamingFile.prototype.getPayload = function () {
-    console.log('will ask for payload ...');
     if (!this.buffer) {
       return null;
     }
