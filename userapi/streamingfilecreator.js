@@ -23,7 +23,7 @@ function createStreamingFile (execlib, DynamicFile) {
   };
 
   StreamingFile.prototype.addBuffer = function (buff) {
-    this.buffer = Buffer.concat(this.buffer, buff);
+    this.buffer = Buffer.concat([this.buffer, buff]);
   };
 
   StreamingFile.prototype.close = function () {
@@ -31,12 +31,24 @@ function createStreamingFile (execlib, DynamicFile) {
     this.closed = true;
   };
 
+  StreamingFile.prototype._doDestroy = function () {
+    lib.runNext(this.destroy.bind(this));
+    return null;
+  };
+
   StreamingFile.prototype.getPayload = function () {
     if (!this.buffer) {
-      return null;
+      return this._doDestroy();
     }
     var b = this.buffer;
-    if (!this.closed) this.buffer = new Buffer(0);
+    if (this.closed) {
+      this.buffer = null;
+      if (!b.length) {
+        return this._doDestroy();
+      }
+    }else{
+      this.buffer = new Buffer(0);
+    }
     return b;
   };
   return StreamingFile;
