@@ -1,6 +1,7 @@
 function createUser(execlib,ParentUser){
   'use strict';
   var lib = execlib.lib,
+    qlib = lib.qlib,
     execSuite = execlib.execSuite,
     taskRegistry = execSuite.taskRegistry;
 
@@ -17,7 +18,7 @@ function createUser(execlib,ParentUser){
   };
 
   User.prototype.askForRemote = function (sinkname, prophash, defer) {
-    this.__service.askForRemote(sinkname, prophash, defer);
+    qlib.promise2defer(this.__service.askForRemote(sinkname, prophash), defer);
   };
 
   User.prototype.disposeOfRemote = function (sinkname, defer) {

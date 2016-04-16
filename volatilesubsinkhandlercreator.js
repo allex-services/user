@@ -5,6 +5,31 @@ function createVolatileSubSinkHandler(execlib) {
     nameOfRemoteSinkDescriptor = execSuite.userServiceSuite.nameOfRemoteSinkDescriptor,
     taskRegistry = execSuite.taskRegistry;
 
+  /*
+   * sinkinfo may be
+   * {
+   *   name: 'Service'
+   * }
+   * findSink will go for 'Service', and the sink found will be 
+   * exposed as the 'Service' subservice
+   *
+   * if 'role' exists in the hash, like
+   * {
+   *   name: 'Service'
+   *   role: 'service'
+   * }
+   * findSink will go for 'Service' with {name: this.userservice.name, role: 'service',
+   * and the sink found will be exposed as 'Service'
+   *
+   * {
+   *   name: 'Service',
+   *   sinkname: 'RealService',
+   * }
+   * findSink will go for 'RealService', and the sink found will be
+   * exposed as the 'Service' subservice
+   *
+   */
+
   function VolatileSubSink(userservice, prophash, sinkinfo) {
     this.count = 1;
     this.userservice = userservice;
@@ -12,11 +37,8 @@ function createVolatileSubSinkHandler(execlib) {
     this.prophash = prophash;
     this.sink = null;
     //console.log('Volatile is out to findSink',this.remoteSinkName(),'with identity',this.identity());
-    this.task = taskRegistry.run('findSink',{
-      sinkname: this.remoteSinkName(),
-      identity: this.identity(),
-      onSink: this.onSink.bind(this)
-    });
+    this.task = null;
+    this.goForSink();
   }
   VolatileSubSink.prototype.destroy = function () {
     if (!this.userservice) {
@@ -35,6 +57,14 @@ function createVolatileSubSinkHandler(execlib) {
     this.prophash = null;
     this.userservice = null;
     this.count = null;
+  };
+
+  VolatileSubSink.prototype.goForSink = function () {
+    this.task = taskRegistry.run('findSink',{
+      sinkname: this.remoteSinkName(),
+      identity: this.identity(),
+      onSink: this.onSink.bind(this)
+    });
   };
 
   VolatileSubSink.prototype.remoteSinkName = function () {

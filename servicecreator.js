@@ -89,22 +89,19 @@ function createUserService(execlib,ParentServicePack){
     }
   }
 
-  UserService.prototype.askForRemote = function (sinkname, prophash, defer){
+  UserService.prototype.askForRemote = function (sinkname, prophash){
     var v = this.volatiles.get(sinkname), rsi;
-    defer = defer || q.defer();
     if (v) { //found an existing volatile sink
       v.inc();
     } else {
       rsi = this.getSinkInfo(sinkname);
       if (!rsi.found) {
-        defer.reject(new lib.Error('INVALID_VOLATILE_SINK_NAME',sinkname));
-        return defer.promise;
+        return q.reject(new lib.Error('INVALID_VOLATILE_SINK_NAME',sinkname));
       }
       //console.log('new VolatileSubSink', prophash);
       this.volatiles.add(sinkname, new VolatileSubSink(this, prophash, rsi.found)); 
     }
-    defer.resolve('ok');
-    return defer.promise;
+    return q(true);
   };
 
   UserService.prototype.getSinkInfo = function (sinkname) {
