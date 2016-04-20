@@ -150,6 +150,12 @@ function createUserService(execlib,ParentServicePack){
     return userspec;
   };
 
+  UserService.prototype.propertyHashDescriptor = {
+    name: {
+      type: 'string'
+    }
+  };
+
   
   return UserService;
 }
