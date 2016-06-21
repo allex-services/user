@@ -1,13 +1,19 @@
-function createUserService(execlib,ParentServicePack){
+function createUserService(execlib,ParentService){
   'use strict';
   var lib = execlib.lib,
     q = lib.q,
-    ParentService = ParentServicePack.Service,
     execSuite = execlib.execSuite,
-    nameOfRemoteSinkDescriptor = execSuite.userServiceSuite.nameOfRemoteSinkDescriptor,
+    nameOfRemoteSinkDescriptor,
     taskRegistry = execSuite.taskRegistry,
     arrymerger = require('./arraymerger')(execlib),
-    VolatileSubSink = require('./volatilesubsinkhandlercreator')(execlib);
+    VolatileSubSink;
+
+  if (!execSuite.userServiceSuite) {
+    execSuite.userServiceSuite = require('./userapi')(execlib);
+  }
+
+  nameOfRemoteSinkDescriptor = execSuite.userServiceSuite.nameOfRemoteSinkDescriptor;
+  VolatileSubSink = require('./volatilesubsinkhandlercreator')(execlib);
 
   function factoryCreator(parentFactory){
     return {
