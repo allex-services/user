@@ -117,7 +117,7 @@ function createVolatileSubSinkHandler(execlib) {
     if ('function' === typeof ondownwaitermethod) {
         ondownwaitermethod.call(this.userservice);
     };
-    var ss = this.userservice.subservices.remove(lssn);
+    var ss = this.userservice.subservices.unregister(lssn);
     this.userservice.state.remove('have'+lssn);
     if (ss && destroytoo) {
       console.log('destroying remote sink', lssn);
