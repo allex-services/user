@@ -36,27 +36,13 @@ function createArrayMerger(execlib) {
 module.exports = createArrayMerger;
 
 },{}],2:[function(require,module,exports){
-ALLEX.execSuite.registry.add('allex_userservice',require('./clientside')(ALLEX, ALLEX.execSuite.registry.get('.')));
+ALLEX.execSuite.registry.registerClientSide('allex_userservice',require('./sinkmapcreator')(ALLEX, ALLEX.execSuite.registry.getClientSide('.')));
 
-},{"./clientside":3}],3:[function(require,module,exports){
-function createClientSide(execlib, ParentServicePack){
-  if (!execlib.execSuite.userServiceSuite) {
-    execlib.execSuite.userServiceSuite = {
-      nameOfRemoteSinkDescriptor: require('./userapi/nameofremotesinkdescriptorcreator')(execlib)
-    };
-  }
-  return {
-    SinkMap: require('./sinkmapcreator')(execlib,ParentServicePack)
-  };
-}
-
-module.exports = createClientSide;
-
-},{"./sinkmapcreator":6,"./userapi/nameofremotesinkdescriptorcreator":9}],4:[function(require,module,exports){
+},{"./sinkmapcreator":5}],3:[function(require,module,exports){
 module.exports = {
 };
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 module.exports = {
   'askForRemote' : [{
     title:'Sinkname',
@@ -78,10 +64,21 @@ module.exports = {
   }]
 };
 
-},{}],6:[function(require,module,exports){
-function sinkMapCreator(execlib,ParentServicePack){
+},{}],5:[function(require,module,exports){
+function sinkMapCreator(execlib,ParentSinkMap){
   'use strict';
-  var sinkmap = new (execlib.lib.Map), ParentSinkMap = ParentServicePack.SinkMap;
+  var sinkmap = new (execlib.lib.Map);
+  if (!execlib.execSuite.userServiceSuite) {
+    execlib.execSuite.userServiceSuite = {
+      nameOfRemoteSinkDescriptor: require('./userapi/nameofremotesinkdescriptorcreator')(execlib)
+    };
+  }
+  /*
+  if (!execlib.execSuite.userServiceSuite) {
+    execlib.execSuite.userServiceSuite = require('./userapi')(execlib);
+  }
+  */
+
   sinkmap.add('service',require('./sinks/servicesinkcreator')(execlib,ParentSinkMap.get('service')));
   sinkmap.add('user',require('./sinks/usersinkcreator')(execlib,ParentSinkMap.get('user')));
   
@@ -90,7 +87,7 @@ function sinkMapCreator(execlib,ParentServicePack){
 
 module.exports = sinkMapCreator;
 
-},{"./sinks/servicesinkcreator":7,"./sinks/usersinkcreator":8}],7:[function(require,module,exports){
+},{"./sinks/servicesinkcreator":6,"./sinks/usersinkcreator":7,"./userapi/nameofremotesinkdescriptorcreator":8}],6:[function(require,module,exports){
 function createServiceSink(execlib,ParentSink){
   'use strict';
 
@@ -110,7 +107,7 @@ function createServiceSink(execlib,ParentSink){
 
 module.exports = createServiceSink;
 
-},{"../methoddescriptors/serviceuser":4}],8:[function(require,module,exports){
+},{"../methoddescriptors/serviceuser":3}],7:[function(require,module,exports){
 function createUserSink(execlib,ParentSink){
   'use strict';
   var lib = execlib.lib,
@@ -156,7 +153,7 @@ function createUserSink(execlib,ParentSink){
 
 module.exports = createUserSink;
 
-},{"../arraymerger":1,"../methoddescriptors/user":5}],9:[function(require,module,exports){
+},{"../arraymerger":1,"../methoddescriptors/user":4}],8:[function(require,module,exports){
 function createNameOfRemoteDescptorFunc(execlib) {
   'use strict';
   var lib = execlib.lib;
