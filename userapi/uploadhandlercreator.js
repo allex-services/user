@@ -13,9 +13,10 @@ function createUploadHandler(execlib, SinkHandler) {
     neededfields: array, names of needed fields
     uploadslugname: once the upload is negotiated, the upload slug will be set on `service` state under uploadslugname
     uploadcb: optional, if exists it will be called. Alternative is to override UploadHandler's onUploadSuccess
+    secure: if true-ish, http will be replaced with https
   */
 
-  function UploadHandler (service, cgiservicename, targetservicename, boundfields, neededfields, uploadslugname, uploadcb) {
+  function UploadHandler (service, cgiservicename, targetservicename, boundfields, neededfields, uploadslugname, uploadcb, secure) {
     SinkHandler.call(this);
     this.service = service;
     this.cgiservicename = cgiservicename;
@@ -24,9 +25,11 @@ function createUploadHandler(execlib, SinkHandler) {
     this.neededfields = neededfields;
     this.uploadslugname = uploadslugname;
     this.uploadcb = uploadcb;
+    this.secure = secure;
   }
   lib.inherit(UploadHandler, SinkHandler);
   UploadHandler.prototype.destroy = function () {
+    this.secure = null;
     this.uploadcb = null;
     this.uploadslugname = null;
     this.neededfields = null;
@@ -63,7 +66,10 @@ function createUploadHandler(execlib, SinkHandler) {
   };
   UploadHandler.prototype.onUploadId = function (defer, findandruntask, originalprophash, id, cgiaddress, cgiport) {
     findandruntask.destroy();
-    var cgisink = originalprophash.sink;
+    var cgisink = originalprophash.sink, proto = 'http';
+    if (this.secure || cgiport === 443) {
+      proto += 's';
+    }
     if(!cgisink){
       defer.reject(new lib.Error('NO_SINK'));
       return;
@@ -72,7 +78,8 @@ function createUploadHandler(execlib, SinkHandler) {
       defer.reject(new lib.Error('CLIENT_STATE_ALREADY_PRESENT'));
       return;
     }
-    this.service.set(this.uploadslugname, 'http://'+cgiaddress+':'+cgiport+'/_'+id);
+    console.log('setting', this.uploadslugname, 'to', proto+'://'+cgiaddress+':'+cgiport+'/_'+id);
+    this.service.set(this.uploadslugname, proto+'://'+cgiaddress+':'+cgiport+'/_'+id);
     defer.resolve(cgisink);
   };
   UploadHandler.prototype.onUploadDone = function (doneobj) {
