@@ -2,6 +2,7 @@ function createUserService(execlib,ParentService){
   'use strict';
   var lib = execlib.lib,
     q = lib.q,
+    qlib = lib.qlib,
     execSuite = execlib.execSuite,
     nameOfRemoteSinkDescriptor,
     taskRegistry = execSuite.taskRegistry,
@@ -155,6 +156,39 @@ function createUserService(execlib,ParentService){
     }
     return userspec;
   };
+
+  UserService.prototype.updateProfile = function (data, defer) {
+    defer.reject (new lib.Error('NOT_IMPLEMENTED'));
+  };
+
+  UserService.prototype.changePassword = function (old_password, new_password, defer) {
+    defer.reject (new lib.Error('NOT_IMPLEMENTED'));
+  };
+
+  UserService.prototype.doChangePassword = function (userresolverSink, old_password, new_password, defer) {
+    qlib.promise2defer (userresolverSink.call(this.CHANGE_PASSWORD_REMOTE_METHOD, this.name, old_password, new_password), defer);
+  };
+
+  UserService.prototype.doUpdateProfile = function (userresolverSink, data, defer) {
+    if (this.PROFILE_COLUMNS) {
+      defer.promise.done (this._updateProfileData.bind(this,data));
+    }
+    qlib.promise2defer(userresolverSink.call(this.UPDATE_PROFILE_REMOTE_METHOD, {username : this.name}, data), defer);
+  };
+
+  UserService.prototype._updateProfileData = function (data) {
+    var pc = this.PROFILE_COLUMNS;
+    if (!pc) return;
+    for (var i = 0; i < pc.length; i++) {
+      this.state.set(this.getProfileFieldName(pc[i]), data[pc[i]]);
+    }
+  };
+  UserService.prototype.getProfileFieldName = function (name) {return 'profile_'+name;}
+
+  UserService.prototype.PROFILE_COLUMNS = null;
+  UserService.prototype.CHANGE_PASSWORD_REMOTE_METHOD = 'changePassword';
+  UserService.prototype.UPDATE_PROFILE_REMOTE_METHOD = 'updateUser';
+
 
   UserService.prototype.propertyHashDescriptor = {
     name: {

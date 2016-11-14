@@ -61,7 +61,23 @@ module.exports = {
   },{
     title: 'Filter',
     type: 'object'
-  }]
+  }],
+  'updateUser' : [
+    {
+      title : 'User data',
+      type : 'object'
+    }
+  ],
+  'changePassword' : [
+    {
+      title : 'Old password',
+      type : 'string'
+    },
+    {
+      title : 'New password',
+      type : 'string'
+    }
+  ] 
 };
 
 },{}],5:[function(require,module,exports){

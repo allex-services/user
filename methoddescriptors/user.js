@@ -16,5 +16,21 @@ module.exports = {
   },{
     title: 'Filter',
     type: 'object'
-  }]
+  }],
+  'updateProfile' : [
+    {
+      title : 'User data',
+      type : 'object'
+    }
+  ],
+  'changePassword' : [
+    {
+      title : 'Old password',
+      type : 'string'
+    },
+    {
+      title : 'New password',
+      type : 'string'
+    }
+  ] 
 };
