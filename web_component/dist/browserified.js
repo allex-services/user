@@ -62,7 +62,7 @@ module.exports = {
     title: 'Filter',
     type: 'object'
   }],
-  'updateUser' : [
+  'updateProfile' : [
     {
       title : 'User data',
       type : 'object'
