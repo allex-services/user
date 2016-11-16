@@ -173,7 +173,7 @@ function createUserService(execlib,ParentService){
     if (this.PROFILE_COLUMNS) {
       defer.promise.done (this._updateProfileData.bind(this,data));
     }
-    qlib.promise2defer(userresolverSink.call(this.UPDATE_PROFILE_REMOTE_METHOD, {username : this.name}, data), defer);
+    qlib.promise2defer(userresolverSink.call(this.UPDATE_PROFILE_REMOTE_METHOD, {username : this.name}, data, {op : '$set', upsert: false}), defer);
   };
 
   UserService.prototype._updateProfileData = function (data) {
