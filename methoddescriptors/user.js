@@ -32,5 +32,11 @@ module.exports = {
       title : 'New password',
       type : 'string'
     }
-  ] 
+  ],
+  'validateCredentials' : [
+    {
+      title : 'Credentials',
+      type : 'object'
+    }
+  ]
 };

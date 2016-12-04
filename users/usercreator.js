@@ -34,11 +34,15 @@ function createUser(execlib,ParentUser){
   };
 
   User.prototype.updateProfile = function (data, defer) {
-    qlib.promise2defer (this.__service.updateProfile(data), defer);
+    this.__service.updateProfile(data, defer);
   };
 
   User.prototype.changePassword = function (old_password, new_password, defer){
-    qlib.promise2defer (this.__service.changePassword(old_password, new_password), defer);
+    this.__service.changePassword(old_password, new_password, defer);
+  };
+
+  User.prototype.validateCredentials = function (credentials, defer) {
+    this.__service.validateCredentials (credentials, defer);
   };
 
   require('./common')(execlib,User);

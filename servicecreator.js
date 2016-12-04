@@ -25,9 +25,11 @@ function createUserService(execlib,ParentService){
 
   function UserService(prophash){
     ParentService.call(this,prophash);
+    this.__hotel = prophash.__hotel;
     this.name = prophash.name;
     this.role = prophash.role;
     lib.traverseShallow(prophash.profile, this.profileItemToState.bind(this));
+    this._profile_keys = Object.keys(prophash.profile);
     this.volatiles = new lib.Map();
     this.sinkInfo.local.forEach(this.createSubService.bind(this, prophash));
   }
@@ -36,8 +38,10 @@ function createUserService(execlib,ParentService){
     lib.containerDestroyAll(this.volatiles);
     this.volatiles.destroy();
     this.volatiles = null;
+    this._profile_keys = null;
     this.role = null;
     this.name = null;
+    this.__hotel = null;
     ParentService.prototype.__cleanUp.call(this);
   };
 
@@ -158,37 +162,27 @@ function createUserService(execlib,ParentService){
   };
 
   UserService.prototype.updateProfile = function (data, defer) {
-    defer.reject (new lib.Error('NOT_IMPLEMENTED'));
+    var promise = this.__hotel.executeOnResolver(['updateUser', {username: this.name}, data, {op : 'set', upsert: false}]);
+    qlib.promise2defer(promise, defer);
+    promise.done (this._onProfileUpdated.bind(this, data));
+  };
+
+  UserService.prototype._onProfileUpdated = function (data, updateresult) {
+    //TODO: check result ...
+    var key;
+
+    for (var i in data) {
+      if (this._profile_keys.indexOf(i) > -1) this.profileItemToState(data[i], i);
+    }
   };
 
   UserService.prototype.changePassword = function (old_password, new_password, defer) {
-    defer.reject (new lib.Error('NOT_IMPLEMENTED'));
+    qlib.promise2defer (this.__hotel.executeOnResolver(['changePassword', old_password, new_password]), defer);
   };
 
-  UserService.prototype.doChangePassword = function (userresolverSink, old_password, new_password, defer) {
-    qlib.promise2defer (userresolverSink.call(this.CHANGE_PASSWORD_REMOTE_METHOD, this.name, old_password, new_password), defer);
+  UserService.prototype.validateCredentials = function (credentials, defer) {
+    qlib.promise2defer(this.__hotel.executeOnResolver(['resolveUser', credentials, defer);
   };
-
-  UserService.prototype.doUpdateProfile = function (userresolverSink, data, defer) {
-    if (this.PROFILE_COLUMNS) {
-      defer.promise.done (this._updateProfileData.bind(this,data));
-    }
-    qlib.promise2defer(userresolverSink.call(this.UPDATE_PROFILE_REMOTE_METHOD, {username : this.name}, data, {op : '$set', upsert: false}), defer);
-  };
-
-  UserService.prototype._updateProfileData = function (data) {
-    var pc = this.PROFILE_COLUMNS;
-    if (!pc) return;
-    for (var i = 0; i < pc.length; i++) {
-      this.state.set(this.getProfileFieldName(pc[i]), data[pc[i]]);
-    }
-  };
-  UserService.prototype.getProfileFieldName = function (name) {return 'profile_'+name;}
-
-  UserService.prototype.PROFILE_COLUMNS = null;
-  UserService.prototype.CHANGE_PASSWORD_REMOTE_METHOD = 'changePassword';
-  UserService.prototype.UPDATE_PROFILE_REMOTE_METHOD = 'updateUser';
-
 
   UserService.prototype.propertyHashDescriptor = {
     name: {
