@@ -181,7 +181,7 @@ function createUserService(execlib,ParentService){
   };
 
   UserService.prototype.validateCredentials = function (credentials, defer) {
-    qlib.promise2defer(this.__hotel.executeOnResolver(['resolveUser', credentials, defer);
+    qlib.promise2defer(this.__hotel.executeOnResolver(['resolveUser', credentials]), defer);
   };
 
   UserService.prototype.propertyHashDescriptor = {
