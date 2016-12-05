@@ -181,7 +181,11 @@ function createUserService(execlib,ParentService){
   };
 
   UserService.prototype.validateCredentials = function (credentials, defer) {
-    qlib.promise2defer(this.__hotel.executeOnResolver(['resolveUser', credentials]), defer);
+    qlib.promise2defer(this.__hotel.executeOnResolver(['resolveUser', credentials]).then (this._onValidatedOK.bind(this)), defer);
+  };
+
+  UserService.prototype._onValidatedOK = function (data) {
+    return data ? q.resolve(true) : q.reject (new lib.Error('INVALID_CREDENTIALS', "Invalid credentials given"));
   };
 
   UserService.prototype.propertyHashDescriptor = {
