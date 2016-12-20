@@ -77,7 +77,13 @@ module.exports = {
       title : 'New password',
       type : 'string'
     }
-  ] 
+  ],
+  'validateCredentials' : [
+    {
+      title : 'Credentials',
+      type : 'object'
+    }
+  ]
 };
 
 },{}],5:[function(require,module,exports){
