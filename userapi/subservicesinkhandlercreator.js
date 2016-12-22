@@ -24,6 +24,9 @@ function createSubServiceSinkHandler(execlib, SinkHandler) {
     if (this.subServiceDownListener) {
       this.subServiceDownListener.destroy();
     }
+    if (!(this.service && this.service.state && this.service.state.data)) {
+      return;
+    }
     this.subServiceDownListener = this.service.state.data.listenFor('have'+this.name, this.onSubServiceDown.bind(this, defer, modulename));
   };
   SubServiceSinkHandler.prototype.onSubServiceDown = function (defer, modulename, haveval) {
