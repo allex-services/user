@@ -177,7 +177,7 @@ function createUserService(execlib,ParentService){
   };
 
   UserService.prototype.changePassword = function (old_password, new_password, defer) {
-    qlib.promise2defer (this.__hotel.executeOnResolver(['changePassword', old_password, new_password]), defer);
+    qlib.promise2defer (this.__hotel.executeOnResolver(['changePassword', this.name, old_password, new_password]), defer);
   };
 
   UserService.prototype.validateCredentials = function (credentials, defer) {
