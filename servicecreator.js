@@ -29,7 +29,7 @@ function createUserService(execlib,ParentService){
     this.name = prophash.name;
     this.role = prophash.role;
     lib.traverseShallow(prophash.profile, this.profileItemToState.bind(this));
-    this._profile_keys = Object.keys(prophash.profile);
+    this._profile_keys = (prophash && prophash.profile) ? Object.keys(prophash.profile) : [];
     this.volatiles = new lib.Map();
     this.sinkInfo.local.forEach(this.createSubService.bind(this, prophash));
   }
@@ -177,7 +177,7 @@ function createUserService(execlib,ParentService){
   };
 
   UserService.prototype.changePassword = function (old_password, new_password, defer) {
-    qlib.promise2defer (this.__hotel.executeOnResolver(['changePassword', old_password, new_password]), defer);
+    qlib.promise2defer (this.__hotel.executeOnResolver(['changePassword', this.name, old_password, new_password]), defer);
   };
 
   UserService.prototype.validateCredentials = function (credentials, defer) {
