@@ -42,13 +42,16 @@ function createDownloadHandler(execlib, SinkHandler) {
   };
   DownloadHandler.prototype.onDownloadId = function (defer, findandruntask, originalprophash, id, cgiaddress, cgiport) {
     findandruntask.destroy();
-    var cgisink = originalprophash.sink;
+    var cgisink = originalprophash.sink, proto = 'http';
+    if (this.secure || cgiport === 443) {
+      proto += 's';
+    }
     if (!cgisink){
       this.service.state.remove(this.downloadslugname);
       defer.reject(new lib.Error('NO_SINK'));
       return;
     }
-    this.service.state.set(this.downloadslugname, 'http://'+cgiaddress+':'+cgiport+'/_'+id);
+    this.service.state.set(this.downloadslugname, proto+'://'+cgiaddress+':'+cgiport+'/_'+id);
     defer.resolve(cgisink);
   };
   DownloadHandler.prototype.onDownloadStarted = function (originalprophash, findandruntask, cgievent) {
