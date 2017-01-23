@@ -68,7 +68,7 @@ function createVolatileSubSinkHandler(execlib) {
   };
 
   VolatileSubSink.prototype.remoteSinkName = function () {
-    return this.sinkinfo.sinkname || this.sinkinfo.name;
+    return this.userservice.clusterDependentRemotePath(this.sinkinfo.sinkname || this.sinkinfo.name);
   };
 
   VolatileSubSink.prototype.localSubSinkName = function () {

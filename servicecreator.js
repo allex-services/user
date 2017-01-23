@@ -188,6 +188,10 @@ function createUserService(execlib,ParentService){
     return data ? q.resolve(true) : q.reject (new lib.Error('INVALID_CREDENTIALS', "Invalid credentials given"));
   };
 
+  UserService.prototype.clusterDependentRemotePath = function (path) {
+    return this.__hotel ? this.__hotel.clusterDependentRemotePath(path) : path;
+  };
+
   UserService.prototype.propertyHashDescriptor = {
     name: {
       type: 'string'
