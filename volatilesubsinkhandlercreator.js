@@ -53,6 +53,9 @@ function createVolatileSubSinkHandler(execlib) {
     //console.log('Volatile', lssn, 'is dying');
     this.userservice.volatiles.remove(lssn);
     this.task = null;
+    if (this.sink) {
+      this.sink.destroy();
+    }
     this.sink = null;
     this.prophash = null;
     this.userservice = null;
@@ -136,11 +139,7 @@ function createVolatileSubSinkHandler(execlib) {
     }
     this.count --;
     if (this.count < 1) {
-      if (this.sink) {
-        this.sink.destroy();
-      } else {
-        this.destroy();
-      }
+      this.destroy();
     }
   };
 

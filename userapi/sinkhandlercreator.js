@@ -58,7 +58,9 @@ function createSinkHandler(execlib) {
     return d.promise;
   };
   SinkHandler.prototype.destroySink = function () {
-    this.sink.destroy();
+    if (this.sink) {
+      this.sink.destroy();
+    }
   };
   SinkHandler.prototype.onSinkDeactivated = function (defer, modulename) {
     this.sink = null;

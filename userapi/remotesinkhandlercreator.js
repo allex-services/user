@@ -22,7 +22,7 @@ function createRemoteSinkHandler(execlib, SubServiceSinkHandler) {
     );
   };
   RemoteSinkHandler.prototype.deactivate = function () {
-    //this.service.disposeOfRemote(this.name);
+    this.service.disposeOfRemote(this.name);
     return SubServiceSinkHandler.prototype.deactivate.call(this);
   };
   RemoteSinkHandler.prototype.propertyHashForRemote = function () {
