@@ -27,11 +27,9 @@ function createCSVFile (execlib, DynamicFile) {
   };
   CsvFile.prototype.produceFromDataArray = function (datafields, dataarray) {
     var ret = this.includeHeaders ? this.headerNames(datafields)+'\n' : '';
-    console.log('ima li date?', dataarray);
     return ret+dataarray.reduce(this.rowProducer.bind(this, datafields), '');
   };
   CsvFile.prototype.rowProducer = function (datafields, res, dataobject) {
-    console.log('sta je res kojmoj?', res);
     var retobj = {ret: ''};
     datafields.forEach(this.onDataField.bind(this, datafields, dataobject, retobj));
     if (res.length) {
