@@ -1,4 +1,4 @@
-function createUserService(execlib,ParentService){
+function createUserService(execlib,ParentService, timerlib){
   'use strict';
   var lib = execlib.lib,
     q = lib.q,
@@ -6,6 +6,7 @@ function createUserService(execlib,ParentService){
     execSuite = execlib.execSuite,
     nameOfRemoteSinkDescriptor,
     taskRegistry = execSuite.taskRegistry,
+    Timer = timerlib.Timer,
     arrymerger = require('./arraymerger')(execlib),
     VolatileSubSink;
 
@@ -31,6 +32,7 @@ function createUserService(execlib,ParentService){
     lib.traverseShallow(prophash.profile, this.profileItemToState.bind(this));
     this._profile_keys = (prophash && prophash.profile) ? Object.keys(prophash.profile) : [];
     this.volatiles = new lib.Map();
+    this.selfDestructTimer = null;
     this.sinkInfo.local.forEach(this.createSubService.bind(this, prophash));
   }
   ParentService.inherit(UserService,factoryCreator);
@@ -192,13 +194,29 @@ function createUserService(execlib,ParentService){
     return this.__hotel ? this.__hotel.clusterDependentRemotePath(path) : path;
   };
 
+  UserService.prototype.logoutSelf = function () {
+    if (this.name) {
+      return this.__hotel.logout(this.name);
+    }
+    return q.reject(new lib.Error('NO_USER_NAME', 'Cannot logout self as a UserService because I have no username'));
+  };
+
   UserService.prototype.propertyHashDescriptor = {
     name: {
       type: 'string'
     }
   };
 
-  
+  UserService.prototype.checkForZeroUsers = function () {
+    if (this.userCountForRole('user') < 1) {
+      if (!this.selfDestructTimer && lib.isNumber(this.selfDestructTimeout)) {
+        this.selfDestructTimer = new Timer(this.logoutSelf.bind(this), this.selfDestructTimeout);
+      }
+    }
+  };
+
+  UserService.prototype.selfDestructTimeout = lib.intervals.Minute;
+
   return UserService;
 }
 

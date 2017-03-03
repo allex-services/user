@@ -11,9 +11,20 @@ function createUser(execlib,ParentUser){
 
   function User(prophash){
     ParentUser.call(this,prophash);
+    if (!this.__service) {
+      this.destroy();
+    } else {
+      if (this.__service.selfDestructTimer) {
+        this.__service.selfDestructTimer.destroy();
+      }
+      this.__service.selfDestructTimer = null;
+    }
   }
   ParentUser.inherit(User,require('../methoddescriptors/user'),['profile_role']);
   User.prototype.__cleanUp = function(){
+    if (this.__service) {
+      this.__service.checkForZeroUsers();
+    }
     ParentUser.prototype.__cleanUp.call(this);
   };
 
