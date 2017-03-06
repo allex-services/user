@@ -195,10 +195,13 @@ function createUserService(execlib,ParentService, timerlib){
   };
 
   UserService.prototype.logoutSelf = function () {
-    if (this.name) {
-      return this.__hotel.logout(this.name);
+    if (!this.name) {
+      return q.reject(new lib.Error('NO_USER_NAME', 'Cannot logout self as a UserService because I have no username'));
     }
-    return q.reject(new lib.Error('NO_USER_NAME', 'Cannot logout self as a UserService because I have no username'));
+    if (!this.__hotel) {
+      return q.reject(new lib.Error('NO_HOTEL', 'Cannot logout self as a UserService because I have no __hotel'));
+    }
+    return this.__hotel.logout(this.name);
   };
 
   UserService.prototype.propertyHashDescriptor = {
