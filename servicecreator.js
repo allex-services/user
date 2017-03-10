@@ -8,14 +8,14 @@ function createUserService(execlib,ParentService, timerlib){
     taskRegistry = execSuite.taskRegistry,
     Timer = timerlib.Timer,
     arrymerger = require('./arraymerger')(execlib),
-    VolatileSubSink;
+    volatileSubSinkFactory;
 
   if (!execSuite.userServiceSuite) {
     execSuite.userServiceSuite = require('./userapi')(execlib);
   }
 
   nameOfRemoteSinkDescriptor = execSuite.userServiceSuite.nameOfRemoteSinkDescriptor;
-  VolatileSubSink = require('./volatilesubsinkhandlercreator')(execlib);
+  volatileSubSinkFactory = require('./volatiles')(execlib);
 
   function factoryCreator(parentFactory){
     return {
@@ -112,7 +112,7 @@ function createUserService(execlib,ParentService, timerlib){
         return q.reject(new lib.Error('INVALID_VOLATILE_SINK_NAME',sinkname));
       }
       //console.log('new VolatileSubSink', prophash);
-      this.volatiles.add(sinkname, new VolatileSubSink(this, prophash, rsi.found)); 
+      this.volatiles.add(sinkname, volatileSubSinkFactory(this, prophash, rsi.found));//new VolatileSubSink(this, prophash, rsi.found)); 
     }
     return q(true);
   };

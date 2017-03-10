@@ -1,4 +1,4 @@
-function createVolatileSubSinkHandler(execlib) {
+function createVolatileSubSinkHandler(execlib, VolatileSubSinkBase) {
   'use strict';
   var lib = execlib.lib,
     execSuite = execlib.execSuite,
@@ -31,38 +31,28 @@ function createVolatileSubSinkHandler(execlib) {
    */
 
   function VolatileSubSink(userservice, prophash, sinkinfo) {
-    this.count = 1;
-    this.userservice = userservice;
-    this.sinkinfo = sinkinfo;
-    this.prophash = prophash;
     this.sink = null;
     //console.log('Volatile is out to findSink',this.remoteSinkName(),'with identity',this.identity());
     this.task = null;
-    this.goForSink();
+    VolatileSubSinkBase.call(this, userservice, prophash, sinkinfo);
   }
+  lib.inherit(VolatileSubSink, VolatileSubSinkBase);
   VolatileSubSink.prototype.destroy = function () {
-    if (!this.userservice) {
-      return;
-    }
+    VolatileSubSinkBase.prototype.destroy.call(this);
     if (this.task) {
       this.task.destroy();
     }
-    var lssn;
-    this.reportSinkDown(true);
-    lssn = this.localSubSinkName();
-    //console.log('Volatile', lssn, 'is dying');
-    this.userservice.volatiles.remove(lssn);
     this.task = null;
     if (this.sink) {
       this.sink.destroy();
     }
     this.sink = null;
-    this.prophash = null;
-    this.userservice = null;
-    this.count = null;
   };
 
   VolatileSubSink.prototype.goForSink = function () {
+    if (this.task) {
+      this.task.destroy();
+    }
     this.task = taskRegistry.run('findSink',{
       sinkname: this.remoteSinkName(),
       identity: this.identity(),
@@ -105,41 +95,6 @@ function createVolatileSubSinkHandler(execlib) {
       this.userservice._activateStaticSubService(lssn, sink);
     } else {
       this.reportSinkDown();
-    }
-  };
-  VolatileSubSink.prototype.reportSinkDown = function (destroytoo) {
-    if (!(this.userservice && this.userservice.state)) {
-      console.log('Volatile will die on Sink down');
-      this.destroy();
-      return;
-    }
-    var lssn, ondownwaitermethodname, ondownwaitermethod;
-    lssn = this.localSubSinkName();
-    ondownwaitermethodname = '_on_'+lssn+'_Down';
-    ondownwaitermethod = this.userservice[ondownwaitermethodname];
-    if ('function' === typeof ondownwaitermethod) {
-        ondownwaitermethod.call(this.userservice);
-    };
-    var ss = this.userservice.subservices.unregister(lssn);
-    this.userservice.state.remove('have'+lssn);
-    if (ss && destroytoo) {
-      console.log('destroying remote sink', lssn);
-      ss.destroy();
-    }
-  };
-  VolatileSubSink.prototype.inc = function () {
-    if('number' !== typeof(this.count)){
-      return;
-    }
-    this.count ++;
-  };
-  VolatileSubSink.prototype.dec = function () {
-    if('number' !== typeof(this.count)){
-      return;
-    }
-    this.count --;
-    if (this.count < 1) {
-      this.destroy();
     }
   };
 
