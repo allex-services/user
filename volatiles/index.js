@@ -1,7 +1,7 @@
 function createVolatileSubSinkHandlerFactory (execlib) {
   'use strict';
 
-  var VolatileSubSinkBase = require('./basecreator'),
+  var VolatileSubSinkBase = require('./basecreator')(execlib),
     FindSinkVolatileSubSinkHandler = require('./findsinkhandlercreator')(execlib, VolatileSubSinkBase),
     HotelVolatileSubSinkHandler;
 
