@@ -21,6 +21,9 @@ function createVolatileSubSinkHandlerBase (execlib) {
     this.reportSinkDown(true);
     lssn = this.localSubSinkName();
     //console.log('Volatile', lssn, 'is dying');
+    if (!(this.userservice && this.userservice.volatiles)) {
+      return;
+    }
     this.userservice.volatiles.remove(lssn);
   };
 
