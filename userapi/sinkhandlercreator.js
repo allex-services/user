@@ -42,7 +42,7 @@ function createSinkHandler(execlib) {
   };
   SinkHandler.prototype.deactivate = function () {
     var d = q.defer();
-    if (!this.sink) {
+    if (!(this.sink && this.sink.destroyed)) {
       d.resolve(true);
     } else {
       if (this.sinkDestroyedHandler) {
@@ -53,8 +53,6 @@ function createSinkHandler(execlib) {
       );
       this.destroySink();
     }
-    //safety belt
-    d.promise.then(null, lib.dummyFunc);
     return d.promise;
   };
   SinkHandler.prototype.destroySink = function () {

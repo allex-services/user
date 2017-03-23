@@ -14,17 +14,17 @@ function createVolatileSubSinkHandlerBase (execlib) {
     if (!this.userservice) {
       return;
     }
-    this.count = null;
-    this.prophash = null;
-    this.userservice = null;
     var lssn;
-    this.reportSinkDown(true);
     lssn = this.localSubSinkName();
     //console.log('Volatile', lssn, 'is dying');
     if (!(this.userservice && this.userservice.volatiles)) {
       return;
     }
     this.userservice.volatiles.remove(lssn);
+    this.reportSinkDown(true);
+    this.count = null;
+    this.prophash = null;
+    this.userservice = null;
   };
 
   VolatileSubSinkBase.prototype.reportSinkDown = function (destroytoo) {
@@ -41,6 +41,7 @@ function createVolatileSubSinkHandlerBase (execlib) {
         ondownwaitermethod.call(this.userservice);
     };
     var ss = this.userservice.subservices.unregister(lssn);
+    console.log('found subservice', !!ss);
     this.userservice.state.remove('have'+lssn);
     if (ss && destroytoo) {
       console.log('destroying remote sink', lssn);

@@ -8,6 +8,10 @@ function createLocalSinkHandler(execlib, SubServiceSinkHandler) {
   }
   lib.inherit(LocalSinkHandler, SubServiceSinkHandler);
   LocalSinkHandler.prototype.acquireSink = function (defer) {
+    if (!(this.service && this.service.subservices)) {
+      defer.resolve(null);
+      return;
+    }
     var ss = this.service.subservices.get(this.name);
     if (ss){
       ss.destroyed.attach(
