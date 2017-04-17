@@ -1,4 +1,4 @@
-function createUserService(execlib,ParentService, timerlib){
+function createUserService(execlib,ParentService, httpresponsefilelib, timerlib){
   'use strict';
   var lib = execlib.lib,
     q = lib.q,
@@ -11,7 +11,7 @@ function createUserService(execlib,ParentService, timerlib){
     volatileSubSinkFactory;
 
   if (!execSuite.userServiceSuite) {
-    execSuite.userServiceSuite = require('./userapi')(execlib);
+    execSuite.userServiceSuite = require('./userapi')(execlib, httpresponsefilelib);
   }
 
   nameOfRemoteSinkDescriptor = execSuite.userServiceSuite.nameOfRemoteSinkDescriptor;
