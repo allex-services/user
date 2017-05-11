@@ -1,7 +1,8 @@
+var arrayoperationscreator = require('allex_arrayoperationslowlevellib');
 function createUserSink(execlib,ParentSink){
   'use strict';
   var lib = execlib.lib,
-    arrymerger = require('../arraymerger')(execlib);
+    arrayOperations = arrayoperationscreator(lib.extend, lib.readPropertyFromDotDelimitedString, lib.isFunction, lib.Map, lib.AllexJSONizingError);
 
   if(!ParentSink){
     ParentSink = execlib.execSuite.registry.get('.').SinkMap.get('user');
@@ -29,11 +30,11 @@ function createUserSink(execlib,ParentSink){
       throw new lib.Error('NOT_A_USERSERVICE_USERSINK_INHERIT',"A subclass of UserService's UserSink did not provide the local sink name array to inherit as a 3rd parameter");
     }
     ParentSink.inherit.call(this, childSinkCtor, methodDescriptors);
-    childSinkCtor.prototype.localSinkNames = lib.arryOperations.unionObjects(this.prototype.localSinkNames, localsinknamearry, 'name', sinkNameName);
+    childSinkCtor.prototype.localSinkNames = arrayOperations.unionObjects(this.prototype.localSinkNames, localsinknamearry, 'name', sinkNameName);
     if (!lib.isArray(remotesinknamearry)) {
       throw new lib.Error('NEW_INHERIT_FINGERPRINT_FOR_USERSINK', 'Missing the remotesinknamearray');
     }
-    childSinkCtor.prototype.remoteSinkNames = lib.arryOperations.unionObjects(this.prototype.remoteSinkNames, remotesinknamearry, 'name', sinkNameName);
+    childSinkCtor.prototype.remoteSinkNames = arrayOperations.unionObjects(this.prototype.remoteSinkNames, remotesinknamearry, 'name', sinkNameName);
     //console.log('finally', childSinkCtor.prototype.localSinkNames, childSinkCtor.prototype.remoteSinkNames);
   };
   UserSink.prototype.localSinkNames = [];
