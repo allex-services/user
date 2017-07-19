@@ -1,6 +1,6 @@
 {
   "name": "allex_userservice",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "UserService",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.hers.rs:allex_services/user.git"
+    "url": "git@github.com:allex-services/user.git"
   },
   "dependencies": {
     "allex_arrayoperationslowlevellib": "1.x"
@@ -21,4 +21,3 @@
   "author": "HERS Belgrade",
   "license": "ISC"
 }
-
