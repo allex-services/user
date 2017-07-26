@@ -25,20 +25,17 @@ function createSinkHandler(execlib) {
     if (sink) {
       this.sinkDestroyedHandler = sink.destroyed.attach(this.onSinkDown.bind(this));
     }
+    return q(sink);
   };
   SinkHandler.prototype.onSinkDown = function (modulename) {
     this.sink = null;
     this.activate();
   };
   SinkHandler.prototype.activate = function () {
-    var d = q.defer();
     if (this.sink) {
-      d.resolve(true);
-    } else {
-      d.promise.then(this._onSink.bind(this));
-      this.acquireSink(d);
+      return q(true);
     }
-    return d.promise;
+    return this.acquireSink();
   };
   SinkHandler.prototype.deactivate = function () {
     var d = q.defer();

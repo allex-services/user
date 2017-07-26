@@ -39,7 +39,8 @@ function createUploadHandler(execlib, SinkHandler) {
     this.service = null;
     SinkHandler.prototype.destroy.call(this);
   };
-  UploadHandler.prototype.acquireSink = function (defer) {
+  UploadHandler.prototype.acquireSink = function () {
+    var d = q.defer();
     taskRegistry.run('findAndRun',{
       program: {
         sinkname: this.cgiservicename,
@@ -55,7 +56,7 @@ function createUploadHandler(execlib, SinkHandler) {
             boundfields: this.boundfields,
             neededfields: this.neededfields,
             onEventId: {
-              'bind yourself': this.onUploadId.bind(this, defer)
+              'bind yourself': this.onUploadId.bind(this, d)
             },
             onUploadDone: this.onUploadDone.bind(this),
             ipaddress: 'fill yourself'
@@ -63,6 +64,7 @@ function createUploadHandler(execlib, SinkHandler) {
         }
       }
     });
+    return d.promise;
   };
   UploadHandler.prototype.onUploadId = function (defer, findandruntask, originalprophash, id, cgiaddress, cgiport) {
     findandruntask.destroy();

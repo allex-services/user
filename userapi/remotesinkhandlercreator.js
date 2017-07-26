@@ -10,13 +10,14 @@ function createRemoteSinkHandler(execlib, SubServiceSinkHandler) {
   RemoteSinkHandler.prototype.destroy = function () {
     SubServiceSinkHandler.prototype.destroy.call(this);
   };
-  RemoteSinkHandler.prototype.acquireSink = function (defer) {
+  RemoteSinkHandler.prototype.acquireSink = function () {
+    var d = q.defer();
     if (!(this.service && this.service.subservices)) {
-      defer.resolve(null);
-      return;
+      return q(null);
     }
-    this.service.subservices.listenFor(this.name, defer.resolve.bind(defer), true, true);
+    this.service.subservices.listenFor(this.name, d.resolve.bind(d), true, true);
     this.service.askForRemote(this.name, this.propertyHashForRemote());
+    return d.promise.then(this._onSink.bind(this));
   };
   RemoteSinkHandler.prototype.deactivate = function () {
     this.service.disposeOfRemote(this.name);

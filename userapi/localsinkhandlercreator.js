@@ -7,20 +7,21 @@ function createLocalSinkHandler(execlib, SubServiceSinkHandler) {
     SubServiceSinkHandler.call(this, service, name);
   }
   lib.inherit(LocalSinkHandler, SubServiceSinkHandler);
-  LocalSinkHandler.prototype.acquireSink = function (defer) {
+  LocalSinkHandler.prototype.acquireSink = function () {
+    var d;
     if (!(this.service && this.service.subservices)) {
-      defer.resolve(null);
-      return;
+      return q.resolve(null);
     }
     var ss = this.service.subservices.get(this.name);
     if (ss){
+      d = q.defer();
       ss.destroyed.attach(
-        this.acquireSink.bind(this, defer)
+        d.resolve.bind(d, true)
       );
       ss.destroy();
-      return;
+      return d.promise.then(this.acquireSink.bind(this));
     }
-    this.service.startSubServiceStatically(
+    return this.service.startSubServiceStatically(
       this.service.sinkInfoData('local', this.name, 'modulename'),
       this.name,
       lib.extend(
@@ -30,9 +31,8 @@ function createLocalSinkHandler(execlib, SubServiceSinkHandler) {
         ),
         this.sinkCtorPropHash()
       )
-    ).done(
-      defer.resolve.bind(defer),
-      defer.reject.bind(defer)
+    ).then(
+      this._onSink.bind(this)
     );
   };
 

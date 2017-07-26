@@ -19,7 +19,8 @@ function createDownloadHandler(execlib, SinkHandler) {
     this.service = null;
     SinkHandler.prototype.destroy.call(this);
   };
-  DownloadHandler.prototype.acquireSink = function (defer) {
+  DownloadHandler.prototype.acquireSink = function () {
+    var d = q.defer();
     taskRegistry.run('findAndRun', {
       program: {
         continuous: true,
@@ -30,7 +31,7 @@ function createDownloadHandler(execlib, SinkHandler) {
           propertyhash: {
             ipaddress: 'fill yourself',
             onEventId: {
-              'bind yourself': this.onDownloadId.bind(this, defer)
+              'bind yourself': this.onDownloadId.bind(this, d)
             },
             onDownloadStarted: {
                'bind yourself': this.onDownloadStarted.bind(this)
@@ -39,6 +40,7 @@ function createDownloadHandler(execlib, SinkHandler) {
         }
       }
     });
+    return d.promise;
   };
   DownloadHandler.prototype.onDownloadId = function (defer, findandruntask, originalprophash, id, cgiaddress, cgiport) {
     findandruntask.destroy();
