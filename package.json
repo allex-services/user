@@ -1,6 +1,6 @@
 {
   "name": "allex_userservice",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "UserService",
   "main": "index.js",
   "scripts": {

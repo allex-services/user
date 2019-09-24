@@ -72,20 +72,23 @@ function createUserService(execlib,ParentService, httpresponsefilelib, timerlib)
     }
   }
   UserService.prototype.sinkInfoData = function (groupname, sinkinfoname, sinkinfofield) {
-    var retobj = {name: sinkinfoname, field: sinkinfofield};
+    var retobj = {name: sinkinfoname, field: sinkinfofield}, ret;
     var group = this.sinkInfo[groupname];
     if (!group) {
       return;
     }
     group.some(sinkinfofinder.bind(null, retobj));
-    return retobj.value;
+    ret = retobj.value;
+    retobj = null;
+    return ret;
   };
   UserService.prototype.createSubService = function (prophash, subsinkinfo){
     this.startSubServiceStatically(subsinkinfo.modulename, subsinkinfo.name, this.createSubServicePropHash(prophash, subsinkinfo));
   };
   UserService.prototype.createSubServicePropHash = function (prophash, subsinkinfo){
-    var ret = {};
-    lib.traverse(subsinkinfo.propertyhash||{}, this.createSubServicePropHashItem.bind(this, prophash, ret));
+    var ret = {}, _r = ret;;
+    lib.traverse(subsinkinfo.propertyhash||{}, this.createSubServicePropHashItem.bind(this, prophash, _r));
+    _r = null;
     return ret;
   };
   UserService.prototype.createSubServicePropHashItem = function (propertyhash, resultprophash, item, itemname) {
@@ -183,10 +186,10 @@ function createUserService(execlib,ParentService, httpresponsefilelib, timerlib)
   };
 
   UserService.prototype.validateCredentials = function (credentials, defer) {
-    qlib.promise2defer(this.__hotel.executeOnResolver(['resolveUser', credentials]).then (this._onValidatedOK.bind(this)), defer);
+    qlib.promise2defer(this.__hotel.executeOnResolver(['resolveUser', credentials]).then (_onValidatedOK.bind), defer);
   };
 
-  UserService.prototype._onValidatedOK = function (data) {
+  function _onValidatedOK (data) {
     return data ? q.resolve(true) : q.reject (new lib.Error('INVALID_CREDENTIALS', "Invalid credentials given"));
   };
 
@@ -195,6 +198,9 @@ function createUserService(execlib,ParentService, httpresponsefilelib, timerlib)
   };
 
   UserService.prototype.logoutSelf = function () {
+    if (!this.selfDestructTimer) {
+      return q(false);
+    }
     if (!this.name) {
       return q.reject(new lib.Error('NO_USER_NAME', 'Cannot logout self as a UserService because I have no username'));
     }
@@ -202,6 +208,13 @@ function createUserService(execlib,ParentService, httpresponsefilelib, timerlib)
       return q.reject(new lib.Error('NO_HOTEL', 'Cannot logout self as a UserService because I have no __hotel'));
     }
     return this.__hotel.logout(this.name);
+  };
+
+  UserService.prototype.giveUpOnSelfDestruction = function () {
+    if (this.selfDestructTimer) {
+      this.selfDestructTimer.destroy();
+    }
+    this.selfDestructTimer = null;
   };
 
   UserService.prototype.propertyHashDescriptor = {

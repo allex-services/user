@@ -14,10 +14,7 @@ function createUser(execlib,ParentUser){
     if (!this.__service) {
       this.destroy();
     } else {
-      if (this.__service.selfDestructTimer) {
-        this.__service.selfDestructTimer.destroy();
-      }
-      this.__service.selfDestructTimer = null;
+      this.__service.giveUpOnSelfDestruction();
     }
   }
   ParentUser.inherit(User,require('../methoddescriptors/user'),['profile_role']);
