@@ -86,8 +86,9 @@ function createUserService(execlib,ParentService, httpresponsefilelib, timerlib)
     this.startSubServiceStatically(subsinkinfo.modulename, subsinkinfo.name, this.createSubServicePropHash(prophash, subsinkinfo));
   };
   UserService.prototype.createSubServicePropHash = function (prophash, subsinkinfo){
-    var ret = {}, _r = ret;;
+    var ret = {}, _r = ret;
     lib.traverse(subsinkinfo.propertyhash||{}, this.createSubServicePropHashItem.bind(this, prophash, _r));
+    prophash = null;
     _r = null;
     return ret;
   };
@@ -121,8 +122,9 @@ function createUserService(execlib,ParentService, httpresponsefilelib, timerlib)
   };
 
   UserService.prototype.getSinkInfo = function (sinkname) {
-    var rsi = {name:sinkname, found:null, role: null};
-    this.sinkInfo.remote.some(remoteSinkInfoFinder.bind(null,rsi));
+    var rsi = {name:sinkname, found:null, role: null}, _rsi = rsi;
+    this.sinkInfo.remote.some(remoteSinkInfoFinder.bind(null,_rsi));
+    _rsi = null;
     return rsi;
   };
 
@@ -186,7 +188,7 @@ function createUserService(execlib,ParentService, httpresponsefilelib, timerlib)
   };
 
   UserService.prototype.validateCredentials = function (credentials, defer) {
-    qlib.promise2defer(this.__hotel.executeOnResolver(['resolveUser', credentials]).then (_onValidatedOK.bind), defer);
+    qlib.promise2defer(this.__hotel.executeOnResolver(['resolveUser', credentials]).then (_onValidatedOK), defer);
   };
 
   function _onValidatedOK (data) {
@@ -226,7 +228,7 @@ function createUserService(execlib,ParentService, httpresponsefilelib, timerlib)
   UserService.prototype.checkForZeroUsers = function () {
     if (this.userCountForRole('user') < 1) {
       if (!this.selfDestructTimer && lib.isNumber(this.selfDestructTimeout)) {
-        this.selfDestructTimer = new Timer(this.logoutSelf.bind(this), this.selfDestructTimeout);
+        this.selfDestructTimer = new Timer(this.logoutSelf.bind(this), -Math.abs(this.selfDestructTimeout));
       }
     }
   };

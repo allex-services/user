@@ -8,23 +8,28 @@ function createArrayMerger(execlib) {
     }
   }
   function itemNamed(arry, name){
-    var foundobj = {found:null};
-    arry.some(nameFinder.bind(foundobj, name));
+    var foundobj = {found:null}, _fo = foundobj;
+    arry.some(nameFinder.bind(_fo, name));
+    _fo = null;
     return foundobj.found;
   }
+  function putter (nitem, _item, _itemname) {
+    nitem[_itemname] = _item;
+  }
   function injector(myarry, item) {
-    var nitem = itemNamed(myarry, item.name);
+    var nitem = itemNamed(myarry, item.name), _nitem;
     if (!nitem) {
       nitem = {};
       myarry.push(nitem);
     }
-    lib.traverse(item, function(_item, _itemname){
-      nitem[_itemname] = _item;
-    });
+    _nitem = nitem;
+    lib.traverse(item, putter.bind(null, _nitem));
+    _nitem = null;
   }
   function arrayMerger(arry1, arry2) {
-    var ret = [];
-    var inject = injector.bind(null, ret);
+    var ret = [], _ret = ret;
+    var inject = injector.bind(null, _ret);
+    _ret = null;
     arry1.forEach(inject);
     arry2.forEach(inject);
     return ret;
