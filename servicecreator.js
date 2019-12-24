@@ -139,6 +139,26 @@ function createUserService(execlib,ParentService, httpresponsefilelib, timerlib)
   };
   
   UserService.prototype.profileItemToState = function (profitem, profitemname) {
+    var pins = profitemname.split('.'), pi0, pi, i;
+    if (lib.isArray(pins) && pins.length>1) {
+      i = 0;
+      profitemname = pins[i];
+      pi = this.state.get('profile_'+pins[i]);
+      if (lib.isVal(pi)) {
+        pi = JSON.parse(JSON.stringify(pi));
+      }
+      pi0 = pi;
+      for (i=1; i<pins.length-1; i++) {
+        if (!lib.isVal(pi)) {
+          console.log(this.constructor.name, 'has to give up on setting profileItemToState with profile item name', profitemname);
+          console.log('on string index', i, 'a profile item cannot be found');
+          return;
+        }
+        pi = pi[pins[i]];
+      }
+      pi[pins[i]] = profitem;
+      profitem = pi0;
+    }
     this.state.set('profile_'+profitemname, profitem);
   };
 
